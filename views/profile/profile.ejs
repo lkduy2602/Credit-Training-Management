@@ -1,0 +1,159 @@
+<%- include('../partials/sidebar.ejs') %> 
+<%- include('../partials/topbar.ejs') %>
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+  <!-- Page Heading -->
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Trang cá nhân</h1>
+    <a href="/profile/change-password" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+      ><i class="fas fa-wrench fa-sm text-white-50"></i> Đổi mật khẩu</a
+    >
+  </div>
+
+  <form>
+    <div id="message"></div>
+    <div class="form-group col-md-6" style="display: flex; justify-content: center">
+      <input type="file" id="avatar-input-profile" hidden />
+      <img
+        onclick="document.getElementById('avatar-input-profile').click()"
+        id="avatar-profile"
+        src=""
+        alt="avatar"
+        style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%; cursor: pointer"
+        onerror="this.src='img/undraw_profile.svg';"
+      />
+    </div>
+    <div class="form-group col-md-6">
+      <label>Địa chỉ email</label>
+      <input id="email-profile" value="" type="email" class="form-control" />
+    </div>
+    <div class="form-group col-md-6">
+      <label>Họ</label>
+      <input id="first_name-profile" value="" type="text" class="form-control" />
+    </div>
+    <div class="form-group col-md-6">
+      <label>Tên</label>
+      <input id="last_name-profile" value="" type="text" class="form-control" />
+    </div>
+    <div class="form-group col-md-4">
+      <label>Sinh nhật</label>
+      <input id="birthday-profile" value="" type="date" class="form-control" />
+    </div>
+    <div class="form-group col-md-4">
+      <label>Giới tính</label>
+      <select id="gender-profile" class="form-control">
+        <option value="0">Nữ</option>
+        <option value="1">Nam</option>
+      </select>
+    </div>
+    <div class="form-group col-md-6">
+      <label>Địa chỉ</label>
+      <input id="address-profile" value="" type="text" class="form-control" />
+    </div>
+    <div class="form-group col-md-6">
+      <label>Số điện thoại</label>
+      <input id="phone-profile" value="" type="text" class="form-control" />
+    </div>
+    <div class="form-group col-md-6">
+      <a onclick="updateProfile()" class="btn btn-primary">Chỉnh sửa</a>
+    </div>
+  </form>
+</div>
+<!-- /.container-fluid -->
+
+<script>
+  const avatarProfile = document.getElementById('avatar-profile');
+  const emailProfile = document.getElementById('email-profile');
+  const firstNameProfile = document.getElementById('first_name-profile');
+  const lastNameProfile = document.getElementById('last_name-profile');
+  const birthdayProfile = document.getElementById('birthday-profile');
+  const genderProfile = document.getElementById('gender-profile');
+  const addressProfile = document.getElementById('address-profile');
+  const phoneProfile = document.getElementById('phone-profile');
+
+  const inputAvatarProfile = document.getElementById('avatar-input-profile');
+
+  const message = document.getElementById('message');
+
+  inputAvatarProfile.addEventListener('change', () => {
+    const file = inputAvatarProfile.files[0];
+    const reader = new FileReader();
+
+    reader.addEventListener('load', () => {
+      avatarProfile.src = reader.result;
+    });
+
+    reader.readAsDataURL(file);
+  });
+
+  window.addEventListener('load', async () => {
+    const response = await fetch(`${URL}/auth/profile`);
+    const result = await response.json();
+
+    const { email, first_name, last_name, birthday, gender, address, phone, avatar } = result.data;
+
+    avatarProfile.src = avatar;
+    emailProfile.value = email;
+    firstNameProfile.value = first_name;
+    lastNameProfile.value = last_name;
+    birthdayProfile.value = convertDateFormat(birthday);
+    birthdayProfile.selectedIndex = gender;
+    addressProfile.value = address;
+    phoneProfile.value = phone;
+
+    for (const option of genderProfile.querySelectorAll('option')) {
+      if (option.value == gender) {
+        option.selected = true;
+      }
+    }
+  });
+
+  async function updateProfile() {
+    const response = await fetch(`${URL}/auth/update-profile`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        first_name: firstNameProfile.value,
+        last_name: lastNameProfile.value,
+        birthday: birthdayProfile.value,
+        gender: genderProfile.value,
+        address: addressProfile.value,
+        phone: phoneProfile.value,
+        avatar: avatarProfile.src,
+      }),
+    });
+    const result = await response.json();
+
+    if (result.status == 400) {
+      message.innerHTML = '';
+      if (Array.isArray(result.message)) {
+        errors = result.message;
+      } else {
+        errors[0] = result.message;
+      }
+
+      for (let i = 0; i < errors.length; i++) {
+        message.innerHTML += `<div class="text-xs font-weight-bold text-danger mb-1">* ${errors[i]}</div>`;
+      }
+    }
+
+    if (result.status == 200) {
+      message.innerHTML = '';
+      success = 'Cập nhật thông tin cá nhân thành công';
+      message.innerHTML = `<div class="text-xs font-weight-bold text-success mb-1">${success}</div>`;
+    }
+  }
+
+  function convertDateFormat(dateString) {
+    const dateParts = dateString.split('/');
+    const year = dateParts[2];
+    const month = dateParts[1];
+    const day = dateParts[0];
+    return year + '-' + month + '-' + day;
+  }
+</script>
+
+<%- include('../partials/footer.ejs') %>

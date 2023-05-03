@@ -1,0 +1,122 @@
+<%- include('../partials/sidebar.ejs') %> <%- include('../partials/topbar.ejs') %>
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+  <!-- Page Heading -->
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Thêm người dùng</h1>
+  </div>
+
+  <form>
+    <div id="message"></div>
+    <div class="form-group col-md-6">
+      <label>Địa chỉ email</label>
+      <input id="email" value="" type="email" class="form-control" />
+    </div>
+    <div class="form-group col-md-6">
+      <label>Mật khẩu</label>
+      <input id="password" value="" type="password" class="form-control" />
+    </div>
+    <div class="form-group col-md-6">
+      <label>Họ</label>
+      <input id="first_name" value="" type="text" class="form-control" />
+    </div>
+    <div class="form-group col-md-6">
+      <label>Tên</label>
+      <input id="last_name" value="" type="text" class="form-control" />
+    </div>
+    <div class="form-group col-md-4">
+      <label>Sinh nhật</label>
+      <input id="birthday" value="" type="date" class="form-control" />
+    </div>
+    <div class="form-group col-md-4">
+      <label>Lớp</label>
+      <select id="class" class="form-control">
+        <option selected value=""></option>
+      </select>
+    </div>
+    <div class="form-group col-md-4">
+      <label>Giới tính</label>
+      <select id="gender" class="form-control">
+        <option value="0">Nữ</option>
+        <option value="1">Nam</option>
+      </select>
+    </div>
+    <div class="form-group col-md-4">
+      <label>Quyền</label>
+      <select id="role" class="form-control">
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+    <div class="form-group col-md-6">
+      <a onclick="createUser()" class="btn btn-primary">Thêm</a>
+    </div>
+  </form>
+</div>
+<!-- /.container-fluid -->
+
+<script>
+  window.addEventListener('load', async () => {
+    const response = await fetch(`${URL}/class`);
+    const result = await response.json();
+
+    const classId = document.getElementById('class');
+
+    for (const _class of result.data) {
+      const option = document.createElement('option');
+      option.text = _class.name;
+      option.value = _class.class_id;
+      classId.add(option);
+    }
+  });
+
+  async function createUser() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const firstName = document.getElementById('first_name').value;
+    const lastName = document.getElementById('last_name').value;
+    const birthday = document.getElementById('birthday').value;
+    const classId = document.getElementById('class').value;
+    const gender = document.getElementById('gender').value;
+    const role = document.getElementById('role').value;
+    const response = await fetch(`${URL}/user/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        password,
+        first_name: firstName,
+        last_name: lastName,
+        birthday,
+        gender,
+        class_id: classId,
+        role,
+      }),
+    });
+    const result = await response.json();
+
+    if (result.status == 400) {
+      message.innerHTML = '';
+      if (Array.isArray(result.message)) {
+        errors = result.message;
+      } else {
+        errors[0] = result.message;
+      }
+
+      for (let i = 0; i < errors.length; i++) {
+        message.innerHTML += `<div class="text-xs font-weight-bold text-danger mb-1">* ${errors[i]}</div>`;
+      }
+    }
+
+    if (result.status == 200) {
+      message.innerHTML = '';
+      success = 'Thêm người dùng thành công';
+      message.innerHTML = `<div class="text-xs font-weight-bold text-success mb-1">${success}</div>`;
+    }
+  }
+</script>
+
+<%- include('../partials/footer.ejs') %>
