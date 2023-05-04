@@ -37,8 +37,10 @@ export class UserService {
         status: ClassStatus.ON,
       });
       if (!getClass) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'Lớp học không tồn tại');
-    } else {
+    } else if (!class_id && role === UserRole.ADMIN) {
       getClass = null;
+    } else if (!class_id && role === UserRole.USER) {
+      throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'Lớp học không tồn tại');
     }
 
     const user = this.userRepository.create({
@@ -119,9 +121,7 @@ export class UserService {
         class: true,
       },
       order: {
-        class: {
-          name: 'ASC',
-        },
+        last_name: 'ASC',
       },
     });
     return LitUserResponse.mapToList(userList);

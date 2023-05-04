@@ -1,58 +1,95 @@
 <%- include('../partials/sidebar.ejs') %> <%- include('../partials/topbar.ejs') %>
 
-    <!-- Begin Page Content -->
-    <div class="container-fluid">
-      <!-- Page Heading -->
-      <!-- <h1 class="h3 mb-2 text-gray-800">Danh sách sinh viên</h1> -->
+<!-- Begin Page Content -->
+<div class="container-fluid">
+  <!-- Page Heading -->
+  <!-- <h1 class="h3 mb-2 text-gray-800">Danh sách sinh viên</h1> -->
 
-      <!-- DataTales Example -->
-      <div class="card shadow mb-4">
-        <div class="card-header py-3">
-          <h6 class="m-0 font-weight-bold text-primary">Danh sách tất cả sinh viên</h6>
-        </div>
-        <div class="card-body">
-          <div class="table-responsive">
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-              <thead>
-                <tr>
-                  <th>Họ và tên</th>
-                  <th>Email</th>
-                  <th>Số điện thoại</th>
-                  <th>Giới tính</th>
-                  <th>Sinh nhật</th>
-                  <th>Lớp</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody id="table-body"></tbody>
-            </table>
-          </div>
-        </div>
+  <!-- DataTales Example -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">Danh sách tất cả sinh viên</h6>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table id="example" class="table table-bordered" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th>Họ và tên</th>
+              <th>Email</th>
+              <th>Số điện thoại</th>
+              <th>Giới tính</th>
+              <th>Sinh nhật</th>
+              <th>Lớp</th>
+              <th></th>
+            </tr>
+          </thead>
+        </table>
       </div>
     </div>
-    <!-- /.container-fluid -->
+  </div>
+</div>
+<!-- /.container-fluid -->
 
-    <script>
-      window.addEventListener('load', async () => {
-        const body = document.getElementById('table-body');
+<!-- Core plugin JavaScript-->
+<!-- <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script> -->
 
-        const response = await fetch(`${URL}/user/`);
-        const result = await response.json();
-        console.log("🚀 ~ result:", result)
-        for (const data of result.data) {
-          body.innerHTML += `
-          <tr>
-            <td>${data.first_name} ${data.last_name}</td>
-            <td>${data.email}</td>
-            <td>${data.phone}</td>
-            <td>${data.gender == 1 ? 'Nam' : 'Nữ'}</td>
-            <td>${data.birthday}</td>
-            <td>${data.class_name}</td>
-            <td></td>
-          </tr>
-          `;
-        }
-      });
-    </script>
+<script>
+  window.addEventListener('load', async () => {
+    const body = document.getElementById('table-body');
 
-    <%- include('../partials/footer.ejs') %>
+    const response = await fetch(`${URL}/user/`);
+    const result = await response.json();
+
+    const columns = [
+      {
+        data: null,
+        render: function (data, type, row) {
+          return row.first_name + ' ' + row.last_name;
+        },
+      },
+      {
+        data: 'email',
+      },
+      {
+        data: 'phone',
+      },
+      {
+        data: 'gender',
+        render: function (data, type, row) {
+          if (data == 1) {
+            return 'Nam';
+          } else {
+            return 'Nữ';
+          }
+        },
+      },
+      {
+        data: 'birthday',
+      },
+      {
+        data: 'class_name',
+      },
+      {
+        data: null,
+        render: function (data, type, row) {
+          return `<div class="text-center">
+                    <a href="#" class="btn btn-info btn-circle btn-sm">
+                        <i class="far fa-eye"></i>
+                    </a>
+                    <a href="#" class="btn btn-warning btn-circle btn-sm">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="#" class="btn btn-danger btn-circle btn-sm">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>`;
+        },
+      },
+    ];
+
+    paginationDataTable(result.data, columns);
+  });
+</script>
+
+<%- include('../partials/footer.ejs') %>

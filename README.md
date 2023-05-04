@@ -45,17 +45,20 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
+## .env File
 
 ```bash
-# unit tests
-$ npm run test
+# Config database connection
+DB_HOST = localhost
+DB_PORT = 3306
+DB_USERNAME = root
+DB_PASSWORD = 
+DATABASE = credit_training_management
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# Config mailer
+MAIL_USER = lkduy2602@gmail.com
+MAIL_PASS = mvvqyvyxzbanjcri
+MAIL_FROM = quanlytinchi@gmail.com
 ```
 
 ## Support
