@@ -102,7 +102,7 @@
     const templatePopupBody = document.getElementById('templatePopupBody')
     const modalFooterTemplate = document.getElementById('modalFooterTemplate')
     titleTemplatePopupModal.innerText = title
-    templatePopupBody.innerHTML = body
+    templatePopupBody.innerHTML = '<div id="messageInPopup"></div>' + body
     modalFooterTemplate.innerHTML = '<button class="btn btn-secondary" type="button" data-dismiss="modal">Đóng</button>'
 
     if (api && !modalFooterTemplate.innerHTML.includes('submitPostAPI')) {
@@ -110,19 +110,39 @@
       const submitPostAPI = document.getElementById('submitPostAPI')
 
       let errors = [];
+
+      const queryTemplatePopupBody = document.querySelector('#templatePopupBody')
+      const inputAvatarProfile = queryTemplatePopupBody.querySelector('#popupTemplate-avatar')
+      const showAvatar = queryTemplatePopupBody.querySelector('#popupTemplate-avatar-profile')
+
+      if (inputAvatarProfile) {
+        inputAvatarProfile.addEventListener('change', () => {
+          const file = inputAvatarProfile.files[0];
+          const reader = new FileReader();
+
+          reader.addEventListener('load', () => {
+            showAvatar.src = reader.result;
+          });
+
+          reader.readAsDataURL(file);
+        });
+      }
       
-      submitPostAPI.onclick = async () => {
-        const queryTemplatePopupBody = document.querySelector('#templatePopupBody')
+      submitPostAPI.onclick = async () => { 
         const inputs = queryTemplatePopupBody.querySelectorAll('.form-control')
+        const message = queryTemplatePopupBody.querySelector('#messageInPopup')
 
         let data = {};
         inputs.forEach(element => {
           const key = element.id.split('-')[1]
           let value;
-          if (isNaN(element.valueAsNumber)) {
+          if (element.type =='number') {
+            value = parseInt(element.value)
+          }else{
             value = element.value
-          }else {
-            value = element.valueAsNumber
+          }
+          if (key == 'avatar') {
+            value = showAvatar.src
           }
           data[key] = value
         });
@@ -152,6 +172,7 @@
 
         if (result.status == 200) {
           clickShowPopup.click()
+          location.reload()
         }
       }
     }

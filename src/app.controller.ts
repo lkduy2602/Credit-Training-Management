@@ -37,11 +37,6 @@ export class AppController {
   dashboardView() {}
 
   // User
-  @Get('user/create')
-  @UseGuards(AuthGuard)
-  @Render('user/create-user.ejs')
-  createUserView() {}
-
   @Get('user/list')
   @UseGuards(AuthGuard)
   @Render('user/list-user.ejs')

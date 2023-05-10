@@ -1,15 +1,15 @@
+import { MailerService } from '@nestjs-modules/mailer';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from 'src/user/entities/user.entity';
-import { Repository } from 'typeorm';
-import { LoginDto } from './dto/login.dto';
-import { UserRole, UserStatus } from 'src/user/enums/user.enum';
 import { ExceptionResponse } from 'src/_utils/exceptions/error-response.exception';
-import { ForgotPasswordDto } from './dto/forgot-password.dto';
-import { MailerService } from '@nestjs-modules/mailer';
-import { ChangePasswordDto } from './dto/change-password.dto';
-import { UpdateProfileDto } from './dto/update-profile.dto';
+import { UserEntity } from 'src/user/entities/user.entity';
+import { UserStatus } from 'src/user/enums/user.enum';
 import { UserResponse } from 'src/user/responses/user.reponse';
+import { Repository } from 'typeorm';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { LoginDto } from './dto/login.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Injectable()
 export class AuthService {

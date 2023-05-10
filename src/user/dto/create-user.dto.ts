@@ -1,5 +1,5 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsString, Matches } from 'class-validator';
-import { UserGender, UserRole, UserStatus } from '../enums/user.enum';
+import { IsEmail, IsEnum, IsNotEmpty, Matches } from 'class-validator';
+import { UserGender, UserRole } from '../enums/user.enum';
 
 export class CreateUserDto {
   @IsEmail(
