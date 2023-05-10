@@ -40,6 +40,32 @@
   </div>
 </div>
 
+<div class="modal fade" id="templatePopup" tabindex="-1" role="dialog" aria-labelledby="templatePopupModal"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="titleTemplatePopupModal"></h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body" id="templatePopupBody"></div>
+      <div class="modal-footer" id="modalFooterTemplate">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap core JavaScript-->
+<script src="/vendor/jquery/jquery.min.js"></script>
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
 <script>
   async function logout() {
     const response = await fetch(`${URL}/auth/logout`, {
@@ -51,22 +77,10 @@
     const result = await response.json();
 
     if (result.status == 200) {
-      window.location.href = 'login'
+      window.location.href = '/login'
     }
   }
-</script>
 
-<!-- Bootstrap core JavaScript-->
-<script src="/vendor/jquery/jquery.min.js"></script>
-<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-<!-- Core plugin JavaScript-->
-<script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
-<script src="/vendor/datatables/jquery.dataTables.min.js"></script>
-<!-- <script src="http://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script> -->
-<script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
-
-<script>
   function paginationDataTable(result, columns) {
     $('#example').DataTable({
       data: result,
@@ -74,9 +88,83 @@
       ordering: false,
       language: {
       lengthMenu: "Chọn số lượng _MENU_",
-      info: "Từ _START_ đến _END_ trong tổng cộng _TOTAL_"
+      info: "Từ _START_ đến _END_ trong tổng cộng _TOTAL_",
+      paginate: {
+        previous: "Trang trước",
+        next: "Trang tiếp"
+      },
     }
     });
+  }
+
+  async function templatePopupModal(title, body, api) {
+    const titleTemplatePopupModal = document.getElementById('titleTemplatePopupModal')
+    const templatePopupBody = document.getElementById('templatePopupBody')
+    const modalFooterTemplate = document.getElementById('modalFooterTemplate')
+    titleTemplatePopupModal.innerText = title
+    templatePopupBody.innerHTML = body
+    modalFooterTemplate.innerHTML = '<button class="btn btn-secondary" type="button" data-dismiss="modal">Đóng</button>'
+
+    if (api && !modalFooterTemplate.innerHTML.includes('submitPostAPI')) {
+      modalFooterTemplate.innerHTML += `<a class="btn btn-primary" id="submitPostAPI">Xác nhận</a>`
+      const submitPostAPI = document.getElementById('submitPostAPI')
+
+      let errors = [];
+      
+      submitPostAPI.onclick = async () => {
+        const queryTemplatePopupBody = document.querySelector('#templatePopupBody')
+        const inputs = queryTemplatePopupBody.querySelectorAll('.form-control')
+
+        let data = {};
+        inputs.forEach(element => {
+          const key = element.id.split('-')[1]
+          let value;
+          if (isNaN(element.valueAsNumber)) {
+            value = element.value
+          }else {
+            value = element.valueAsNumber
+          }
+          data[key] = value
+        });
+        console.log(data);
+
+        const response = await fetch(`${URL}/${api}/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+        const result = await response.json();
+
+        if (result.status == 400) {
+          message.innerHTML = '';
+          if (Array.isArray(result.message)) {
+            errors = result.message;
+          } else {
+            errors[0] = result.message;
+          }
+
+          for (let i = 0; i < errors.length; i++) {
+            message.innerHTML += `<div class="text-xs font-weight-bold text-danger mb-1">* ${errors[i]}</div>`;
+          }
+        }
+
+        if (result.status == 200) {
+          clickShowPopup.click()
+        }
+      }
+    }
+    const clickShowPopup = document.getElementById('clickShowPopup')
+    clickShowPopup.click()
+  }
+
+  function convertDateFormat(dateString) {
+    const dateParts = dateString.split('/');
+    const year = dateParts[2];
+    const month = dateParts[1];
+    const day = dateParts[0];
+    return year + '-' + month + '-' + day;
   }
 </script>
 
@@ -90,6 +178,8 @@
 <script src="/js/demo/chart-area-demo.js"></script>
 <script src="/js/demo/chart-pie-demo.js"></script>
 <script src="/js/demo/datatables-demo.js"></script>
+
+<a id="clickShowPopup" hidden data-toggle="modal" data-target="#templatePopup"></a>
 </body>
 
 </html>

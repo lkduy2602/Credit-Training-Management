@@ -146,14 +146,6 @@
       message.innerHTML = `<div class="text-xs font-weight-bold text-success mb-1">${success}</div>`;
     }
   }
-
-  function convertDateFormat(dateString) {
-    const dateParts = dateString.split('/');
-    const year = dateParts[2];
-    const month = dateParts[1];
-    const day = dateParts[0];
-    return year + '-' + month + '-' + day;
-  }
 </script>
 
 <%- include('../partials/footer.ejs') %>

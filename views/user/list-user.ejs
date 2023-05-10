@@ -33,8 +33,142 @@
 
 <!-- Core plugin JavaScript-->
 <!-- <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script> -->
-
 <script>
+  $(function () {
+    $(document).on('click', '.detail-list', async function () {
+      let id = $(this).data('id');
+      const response = await fetch(`${URL}/user/${id}/detail`);
+      const result = await response.json();
+
+      const data = result.data;
+      let title = 'Chi tiết sinh viên';
+      let body = `
+      <div class="text-center mb-3">
+        <img src="${data.avatar}" alt="" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="test1">Họ</span>
+        </div>
+        <div class="form-control">${data.first_name}</div>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Tên</span>
+        </div>
+        <div class="form-control">${data.last_name}</div>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Email</span>
+        </div>
+        <div class="form-control">${data.email}</div>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Số điện thoại</span>
+        </div>
+        <div class="form-control">${data.phone}</div>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Ngày sinh</span>
+        </div>
+        <div class="form-control">${data.birthday}</div>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Giới tính</span>
+        </div>
+        <div class="form-control">${data.gender == 1 ? 'Nam' : 'Nữ'}</div>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Địa chỉ</span>
+        </div>
+        <div class="form-control">${data.address}</div>
+      </div>
+      `;
+      let apiSubmitData = '';
+      templatePopupModal(title, body, apiSubmitData);
+    });
+
+    $(document).on('click', '.edit-list', async function (params) {
+      let id = $(this).data('id');
+      const response = await fetch(`${URL}/user/${id}/detail`);
+      const result = await response.json();
+      const data = result.data;
+      let title = 'Chỉnh sửa sinh viên';
+      let body = `
+      <div class="text-center mb-3">
+        <img src="${data.avatar}" alt="" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="test1">Họ</span>
+        </div>
+        <input type="text" class="form-control" id="popupTemplate-first_name" value="${data.first_name}">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Tên</span>
+        </div>
+        <input type="text" class="form-control" id="popupTemplate-last_name" value="${data.last_name}">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Email</span>
+        </div>
+        <input type="text" class="form-control" id="popupTemplate-email" value="${data.email}">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Số điện thoại</span>
+        </div>
+        <input type="text" class="form-control" id="popupTemplate-phone" value="${data.phone}">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Ngày sinh</span>
+        </div>
+        <input type="date" class="form-control" id="popupTemplate-birthday" value="${convertDateFormat(data.birthday)}">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Giới tính</span>
+        </div>
+        <select class="form-control" id="popupTemplate-gender">
+          <option value="0" ${data.gender == 0 ? 'selected' : ''}>Nữ</option>
+          <option value="1" ${data.gender == 1 ? 'selected' : ''}>Nam</option>
+        </select>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Địa chỉ</span>
+        </div>
+        <input type="text" class="form-control" id="popupTemplate-address" value="${data.address}">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Quyền</span>
+        </div>
+        <select class="form-control" id="popupTemplate-role">
+          <option value="user" ${data.role == "user" ? 'selected' : ''}>Sinh viên</option>
+          <option value="admin" ${data.role == "admin" ? 'selected' : ''}>Giáo viên</option>
+        </select>
+      </div>
+      <div style="display: none;" class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Địa chỉ</span>
+        </div>
+        <input type="number" class="form-control" id="popupTemplate-user_id" value="${data.user_id}">
+      </div>
+      `;
+      let apiSubmitData = 'user/update';
+      templatePopupModal(title, body, apiSubmitData);
+    });
+  });
+
   window.addEventListener('load', async () => {
     const body = document.getElementById('table-body');
 
@@ -74,10 +208,10 @@
         data: null,
         render: function (data, type, row) {
           return `<div class="text-center">
-                    <a href="#" class="btn btn-info btn-circle btn-sm">
+                    <a class="btn btn-info btn-circle btn-sm detail-list" data-id = '${data.user_id}'>
                         <i class="far fa-eye"></i>
                     </a>
-                    <a href="#" class="btn btn-warning btn-circle btn-sm">
+                    <a class="btn btn-warning btn-circle btn-sm edit-list" data-id = '${data.user_id}'>
                         <i class="fas fa-edit"></i>
                     </a>
                     <a href="#" class="btn btn-danger btn-circle btn-sm">

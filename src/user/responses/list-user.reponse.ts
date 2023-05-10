@@ -2,6 +2,7 @@ import { UserGender, UserRole, UserStatus } from '../enums/user.enum';
 import * as moment from 'moment';
 
 export class LitUserResponse {
+  user_id: number;
   email: string;
   first_name: string;
   last_name: string;
@@ -11,6 +12,7 @@ export class LitUserResponse {
   class_name: string;
 
   constructor(data?: any) {
+    this.user_id = data?.user_id;
     this.email = data?.email || '';
     this.first_name = data?.first_name || '';
     this.last_name = data?.last_name || '';
