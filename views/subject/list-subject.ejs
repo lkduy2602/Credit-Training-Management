@@ -1,0 +1,208 @@
+<%- include('../partials/sidebar.ejs') %> <%- include('../partials/topbar.ejs') %>
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+  <!-- Page Heading -->
+  <!-- <h1 class="h3 mb-2 text-gray-800">Danh sách sinh viên</h1> -->
+
+  <!-- DataTales Example -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
+      <h6 class="m-0 font-weight-bold text-primary">Danh sách tất cả môn học</h6>
+      <a onclick="clickEventShowPopupCreateUser()" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+        ><i class="fas fa-wrench fa-sm text-white-50"></i> Thêm môn học</a
+      >
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table id="example" class="table table-bordered" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th>Tên môn học</th>
+              <th>Số tín chỉ</th>
+              <th></th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /.container-fluid -->
+
+<!-- Core plugin JavaScript-->
+<!-- <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script> -->
+<script>
+  $(function () {
+    $(document).on('click', '.detail-list', async function () {
+      let id = $(this).data('id');
+      const response = await fetch(`${URL}/user/${id}/detail`);
+      const result = await response.json();
+
+      const data = result.data;
+      let title = 'Chi tiết sinh viên';
+      let body = `
+      <div class="text-center mb-3">
+        <img src="${data.avatar}" alt="" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="test1">Họ</span>
+        </div>
+        <div class="form-control">${data.first_name}</div>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Tên</span>
+        </div>
+        <div class="form-control">${data.last_name}</div>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Email</span>
+        </div>
+        <div class="form-control">${data.email}</div>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Số điện thoại</span>
+        </div>
+        <div class="form-control">${data.phone}</div>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Lớp</span>
+        </div>
+        <div class="form-control">${data.class.name}</div>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Ngày sinh</span>
+        </div>
+        <div class="form-control">${data.birthday}</div>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Giới tính</span>
+        </div>
+        <div class="form-control">${data.gender == 1 ? 'Nam' : 'Nữ'}</div>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Địa chỉ</span>
+        </div>
+        <div class="form-control">${data.address}</div>
+      </div>
+      `;
+      let apiSubmitData = '';
+      templatePopupModal(title, body, apiSubmitData);
+    });
+
+    $(document).on('click', '.edit-list', async function () {
+      let id = $(this).data('id');
+      const response = await fetch(`${URL}/subject/${id}/detail`);
+      const result = await response.json();
+      const data = result.data;
+      let title = 'Chỉnh sửa môn học';
+
+      let body = `
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Tên môn học</span>
+        </div>
+        <input type="text" class="form-control" id="popupTemplate-name" value="${data.name}">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Số tín chỉ</span>
+        </div>
+        <input type="number" class="form-control" id="popupTemplate-no_of_credit" value="${data.no_of_credit}">
+      </div>
+      <div style="display: none;" class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Địa chỉ</span>
+        </div>
+        <input type="number" class="form-control" id="popupTemplate-subject_id" value="${data.subject_id}">
+      </div>
+      `;
+      let apiSubmitData = 'subject/update';
+      templatePopupModal(title, body, apiSubmitData);
+    });
+
+    $(document).on('click', '.delete-list', function () {
+      let id = $(this).data('id');
+      let title = 'Xóa môn học';
+      let body = `
+        Bạn có muốn xóa môn học này không
+        <div style="display: none;" class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Địa chỉ</span>
+        </div>
+          <input type="number" class="form-control" id="popupTemplate-subject_id" value="${id}">
+        </div>
+      `;
+      let apiSubmitData = 'subject/delete';
+      templatePopupModal(title, body, apiSubmitData);
+    });
+  });
+
+  async function clickEventShowPopupCreateUser() {
+    let id = $(this).data('id');
+    let title = 'Thêm môn học';
+    let body = `
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Tên môn học</span>
+        </div>
+        <input type="text" class="form-control" id="popupTemplate-name" value="">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Số tín chỉ</span>
+        </div>
+        <input type="number" class="form-control" id="popupTemplate-no_of_credit" value="">
+      </div>
+      `;
+    let apiSubmitData = 'subject/create';
+    templatePopupModal(title, body, apiSubmitData);
+  }
+
+  window.addEventListener('load', async () => {
+    const body = document.getElementById('table-body');
+
+    const response = await fetch(`${URL}/subject/`);
+    const result = await response.json();
+
+    const columns = [
+      {
+        data: 'name',
+      },
+      {
+        data: 'no_of_credit',
+      },
+      {
+        data: null,
+        render: function (data, type, row) {
+          return `<div class="text-center">
+                    <a title="Danh sách sinh viên" class="btn btn-info btn-circle btn-sm detail-list" data-id = '${data.subject_id}'>
+                        <i class="fas fa-solid fa-list"></i>
+                    </a>
+                    <a title="Thêm sinh viên" class="btn btn-info btn-circle btn-sm detail-list" data-id = '${data.subject_id}'>
+                        <i class="fas fa-solid fa-user-plus"></i>
+                    </a>
+                    <a title="Chỉnh sửa môn học" class="btn btn-warning btn-circle btn-sm edit-list" data-id = '${data.subject_id}'>
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a title="Xóa môn học" href="#" class="btn btn-danger btn-circle btn-sm delete-list" data-id = '${data.subject_id}'>
+                        <i class="fas fa-trash"></i>
+                    </a>
+                  </div>`;
+        },
+      },
+    ];
+
+    paginationDataTable(result.data, columns);
+  });
+</script>
+
+<%- include('../partials/footer.ejs') %>

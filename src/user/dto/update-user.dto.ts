@@ -38,10 +38,10 @@ export class UpdateUserDto {
   @Matches(/(\+84|0)(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-5]|9[0-9])[0-9]{7}/g, {
     message: 'Số điện thoại không đúng định dạng',
   })
-  @IsNotEmpty({
-    message: 'Số điện thoại không được để trống',
-  })
   phone: string;
+
+  @IsNotEmpty({ message: 'Lớp không được để trống' })
+  class_id: number;
 
   avatar: string;
 

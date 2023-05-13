@@ -20,9 +20,9 @@
     <link href="/css/sb-admin-2.min.css" rel="stylesheet" />
 
     <!-- Custom styles for this page -->
-    <link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-<script src="https://cdn.datatables.net/v/dt/dt-1.10.15/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/v/dt/dt-1.10.15/datatables.min.js"></script>
   </head>
 
   <body id="page-top">
@@ -42,7 +42,7 @@
         <hr class="sidebar-divider my-0" />
 
         <!-- Nav Item - Dashboard -->
-        <li class="nav-item active">
+        <li class="nav-item" id="sidebar-dashboard">
           <a class="nav-link" href="/dashboard">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Trang chủ</span></a
@@ -56,13 +56,17 @@
         <div class="sidebar-heading">Quản lý</div>
 
         <!-- Nav Item - Pages Collapse Menu -->
-        <li class="nav-item">
-          <a
-            class="nav-link"
-            href="/user/list"
-          >
-            <i class="fas fa-solid fa-list"></i>
+        <li class="nav-item" id="sidebar-user-list">
+          <a class="nav-link" href="/user/list">
+            <i class="fas fa-solid fa-user-graduate"></i>
             <span>Danh sách sinh viên</span>
+          </a>
+        </li>
+
+        <li class="nav-item" id="sidebar-subject-list">
+          <a class="nav-link" href="/subject/list">
+            <i class="fas fa-solid fa-book"></i>
+            <span>Danh sách môn học</span>
           </a>
         </li>
 
@@ -148,3 +152,25 @@
         </div>
       </ul>
       <!-- End of Sidebar -->
+
+      <script>
+        const pathName = window.location.pathname;
+        const firstPath = pathName.split('/')[1];
+        switch (firstPath) {
+          case 'user':
+            const sidebarUserList = document.getElementById('sidebar-user-list');
+            sidebarUserList.classList.add('active');
+            break;
+          case 'subject':
+            const sidebarSubjectList = document.getElementById('sidebar-subject-list');
+            sidebarSubjectList.classList.add('active');
+            break;
+          case 'dashboard':
+            const sidebarDashboard = document.getElementById('sidebar-dashboard');
+            sidebarDashboard.classList.add('active');
+            break;
+          default:
+            break;
+        }
+      </script>
+

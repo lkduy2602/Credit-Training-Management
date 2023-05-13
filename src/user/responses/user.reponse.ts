@@ -1,3 +1,4 @@
+import { ClassEntity } from 'src/class/entities/class.entity';
 import { UserGender, UserRole, UserStatus } from '../enums/user.enum';
 import * as moment from 'moment';
 
@@ -13,6 +14,7 @@ export class UserResponse {
   avatar: string;
   status: UserStatus;
   role: UserRole;
+  class: ClassEntity;
 
   constructor(data?: any) {
     this.user_id = data?.user_id || 0;
@@ -26,6 +28,7 @@ export class UserResponse {
     this.avatar = data?.avatar || '';
     this.status = data?.status || 0;
     this.role = data?.role || '';
+    this.class = data?.class || {};
   }
 
   static mapToList(data?: any[]) {

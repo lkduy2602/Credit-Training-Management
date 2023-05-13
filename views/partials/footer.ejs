@@ -131,6 +131,7 @@
       submitPostAPI.onclick = async () => { 
         const inputs = queryTemplatePopupBody.querySelectorAll('.form-control')
         const message = queryTemplatePopupBody.querySelector('#messageInPopup')
+        console.log('🚀 ~ message:', message)
 
         let data = {};
         inputs.forEach(element => {
@@ -146,7 +147,6 @@
           }
           data[key] = value
         });
-        console.log(data);
 
         const response = await fetch(`${URL}/${api}/`, {
           method: 'POST',
@@ -159,9 +159,11 @@
 
         if (result.status == 400) {
           message.innerHTML = '';
+          errors = [];
           if (Array.isArray(result.message)) {
             errors = result.message;
           } else {
+            console.log('sjkashdkjas');
             errors[0] = result.message;
           }
 

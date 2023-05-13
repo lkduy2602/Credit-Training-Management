@@ -75,6 +75,12 @@
       </div>
       <div class="input-group mb-3">
         <div class="input-group-prepend">
+          <span class="input-group-text">Lớp</span>
+        </div>
+        <div class="form-control">${data.class.name}</div>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
           <span class="input-group-text">Ngày sinh</span>
         </div>
         <div class="form-control">${data.birthday}</div>
@@ -102,6 +108,18 @@
       const result = await response.json();
       const data = result.data;
       let title = 'Chỉnh sửa sinh viên';
+
+      const getClass = await fetch(`${URL}/class`);
+      const resultGetClass = await getClass.json();
+
+      let optionList = '';
+      for (const _class of resultGetClass.data) {
+        const option = `<option value="${_class.class_id}" ${data.class.class_id == _class.class_id ? 'selected' : ''}>${
+          _class.name
+        }</option>`;
+        optionList += option;
+      }
+
       let body = `
       <div class="text-center mb-3">
         <input type="file" class="form-control" id="popupTemplate-avatar" hidden />
@@ -132,6 +150,14 @@
           <span class="input-group-text">Số điện thoại</span>
         </div>
         <input type="text" class="form-control" id="popupTemplate-phone" value="${data.phone}">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Lớp</span>
+        </div>
+        <select class="form-control" id="popupTemplate-class_id">
+          ${optionList}
+        </select>
       </div>
       <div class="input-group mb-3">
         <div class="input-group-prepend">
@@ -195,10 +221,12 @@
     const response = await fetch(`${URL}/class`);
     const result = await response.json();
 
-    const option = document.createElement('option');
+    let optionList = '';
     for (const _class of result.data) {
+      const option = document.createElement('option');
       option.text = _class.name;
       option.value = _class.class_id;
+      optionList += option.outerHTML;
     }
 
     let id = $(this).data('id');
@@ -234,7 +262,7 @@
         </div>
         <select class="form-control" id="popupTemplate-class_id">
           <option selected value=""></option>
-          ${option.outerHTML}
+          ${optionList}
         </select>
       </div>
       <div class="input-group mb-3">
@@ -311,13 +339,13 @@
         data: null,
         render: function (data, type, row) {
           return `<div class="text-center">
-                    <a class="btn btn-info btn-circle btn-sm detail-list" data-id = '${data.user_id}'>
+                    <a title="Chi tiết sinh viên" class="btn btn-info btn-circle btn-sm detail-list" data-id = '${data.user_id}'>
                         <i class="far fa-eye"></i>
                     </a>
-                    <a class="btn btn-warning btn-circle btn-sm edit-list" data-id = '${data.user_id}'>
+                    <a title="Chỉnh sửa sinh viên" class="btn btn-warning btn-circle btn-sm edit-list" data-id = '${data.user_id}'>
                         <i class="fas fa-edit"></i>
                     </a>
-                    <a href="#" class="btn btn-danger btn-circle btn-sm delete-list" data-id = '${data.user_id}'>
+                    <a title="Xóa sinh viên" href="#" class="btn btn-danger btn-circle btn-sm delete-list" data-id = '${data.user_id}'>
                         <i class="fas fa-trash"></i>
                     </a>
                 </div>`;

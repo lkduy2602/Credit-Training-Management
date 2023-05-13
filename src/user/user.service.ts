@@ -59,13 +59,19 @@ export class UserService {
   }
 
   async updateUser(body: UpdateUserDto) {
-    const { address, avatar, birthday, first_name, gender, last_name, phone, user_id, role } = body;
+    const { address, avatar, birthday, first_name, gender, last_name, phone, user_id, role, class_id } = body;
 
-    const user = await this.userRepository.findOneBy({
-      user_id,
-    });
+    const [user, getClass] = await Promise.all([
+      this.userRepository.findOneBy({
+        user_id,
+      }),
+      this.classRepository.findOneBy({
+        class_id,
+      }),
+    ]);
 
     if (!user) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'User không tồn tại');
+    if (!getClass) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'Lớp không tồn tại');
 
     await this.userRepository.update(
       {
@@ -80,6 +86,7 @@ export class UserService {
         last_name,
         phone,
         role,
+        class: getClass,
       },
     );
   }
@@ -103,8 +110,15 @@ export class UserService {
   }
 
   async getDetailUser(user_id: number) {
-    const user = await this.userRepository.findOneBy({
-      user_id,
+    if (!user_id) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'user_id không được để trống');
+
+    const user = await this.userRepository.findOne({
+      where: {
+        user_id,
+      },
+      relations: {
+        class: true,
+      },
     });
     if (!user) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'User không tồn tại');
 
@@ -112,18 +126,13 @@ export class UserService {
   }
 
   async getListUser() {
-    const userList = await this.userRepository.find({
-      where: {
-        status: UserStatus.ACTIVE,
-        role: UserRole.USER,
-      },
-      relations: {
-        class: true,
-      },
-      order: {
-        last_name: 'ASC',
-      },
-    });
+    const userList = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.status = :status', { status: UserStatus.ACTIVE })
+      .andWhere('user.role = :role', { role: UserRole.USER })
+      .leftJoinAndSelect('user.class', 'class')
+      .orderBy(`substring_index(last_name, ' ', -1)`)
+      .getMany();
     return LitUserResponse.mapToList(userList);
   }
 }

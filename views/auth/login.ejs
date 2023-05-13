@@ -102,6 +102,7 @@
 
         if (result.status == 400) {
           message.innerHTML = '';
+          errors = []
           if (Array.isArray(result.message)) {
             errors = result.message;
           } else {

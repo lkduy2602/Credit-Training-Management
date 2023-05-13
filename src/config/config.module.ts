@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClassEntity } from 'src/class/entities/class.entity';
+import { SubjectEntity } from 'src/subject/entities/subject.entity';
 import { UserEntity } from 'src/user/entities/user.entity';
 
 @Module({
@@ -15,7 +16,7 @@ import { UserEntity } from 'src/user/entities/user.entity';
       username: process.env.DB_USERNAME || 'root',
       password: process.env.DB_PASSWORD || '',
       database: process.env.DATABASE || 'test',
-      entities: [UserEntity, ClassEntity],
+      entities: [UserEntity, ClassEntity, SubjectEntity],
       synchronize: true,
     }),
     MailerModule.forRoot({

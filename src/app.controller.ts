@@ -41,4 +41,10 @@ export class AppController {
   @UseGuards(AuthGuard)
   @Render('user/list-user.ejs')
   listUserView() {}
+
+  // Subject
+  @Get('subject/list')
+  @UseGuards(AuthGuard)
+  @Render('subject/list-subject.ejs')
+  listSubjectView() {}
 }

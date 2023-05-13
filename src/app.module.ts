@@ -6,9 +6,12 @@ import { UserModule } from './user/user.module';
 import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionFilter } from './_utils/exceptions/filter.exception';
 import { ClassModule } from './class/class.module';
+import { SubjectModule } from './subject/subject.module';
+import { ScoreModule } from './score/score.module';
+import { SemesterModule } from './semester/semester.module';
 
 @Module({
-  imports: [ConfigOptionModule, AuthModule, UserModule, ClassModule],
+  imports: [ConfigOptionModule, AuthModule, UserModule, ClassModule, SubjectModule, ScoreModule, SemesterModule],
   controllers: [AppController],
   providers: [
     {
