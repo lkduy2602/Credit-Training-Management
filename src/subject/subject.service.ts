@@ -13,6 +13,7 @@ import { DeleteSubjectDto } from './dto/delete-subject.dto';
 import { UpdateSubjectDto } from './dto/update-subject.dto';
 import { SubjectEntity } from './entities/subject.entity';
 import { SubjectStatus } from './enums/subject.enum';
+import { DeleteUserSubjectDto } from './dto/delete-user-subject.dto';
 
 @Injectable()
 export class SubjectService {
@@ -145,6 +146,46 @@ export class SubjectService {
     );
   }
 
+  async deleteUserSubject(body: DeleteUserSubjectDto) {
+    const { subject_id, user_ids } = body;
+
+    const subjectDetail = await this.subjectRepository.findOneBy({
+      subject_id,
+      status: SubjectStatus.ACTIVE,
+    });
+    if (!subjectDetail) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'Môn học không tồn tại');
+
+    await Promise.all(
+      user_ids.map(async (item) => {
+        const user = await this.userRepository.findOneBy({
+          user_id: item,
+          status: UserStatus.ACTIVE,
+          role: UserRole.USER,
+        });
+        if (!user) return;
+
+        const isExistUserInSubject = await this.scoreRepository.findOneBy({
+          user: {
+            user_id: item,
+          },
+          subject: {
+            subject_id,
+          },
+        });
+        if (!isExistUserInSubject) return;
+
+        await this.scoreRepository.delete({
+          user: {
+            user_id: item,
+          },
+          subject: {
+            subject_id,
+          },
+        });
+      }),
+    );
+  }
+
   async findAllUserInSubject(subject_id: number) {
     const subjectDetail = await this.subjectRepository.findOneBy({
       subject_id,
@@ -154,6 +195,7 @@ export class SubjectService {
 
     const userListInSubject = await this.userRepository
       .createQueryBuilder('user')
+      .leftJoinAndSelect('user.class', 'class')
       .leftJoinAndSelect('user.score', 'score')
       .leftJoinAndSelect('score.subject', 'subject')
       .where('user.status = :status', { status: UserStatus.ACTIVE })
@@ -189,6 +231,7 @@ export class SubjectService {
 
     const queryBuilder = this.userRepository
       .createQueryBuilder('user')
+      .leftJoinAndSelect('user.class', 'class')
       .where('user.status = :status', { status: UserStatus.ACTIVE })
       .andWhere('user.role = :role', { role: UserRole.USER });
 

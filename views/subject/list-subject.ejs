@@ -15,7 +15,7 @@
     </div>
     <div class="card-body">
       <div class="table-responsive">
-        <table id="example" class="table table-bordered" cellspacing="0" width="100%" >
+        <table id="example" class="table table-bordered" cellspacing="0" width="100%">
           <thead>
             <tr>
               <th>Tên môn học</th>
@@ -45,21 +45,31 @@
       for (const user of data) {
         userList += `
             <tr>
-              <th>${user.user_id}</th>
-              <th>${user.first_name} ${user.last_name}</th>
-              <th>${user.email}</th>
-              <th>${user.gender == 1 ? 'Nam' : 'Nữ'}</th>
+              <td>${user.user_id}</td>
+              <td>${user.first_name} ${user.last_name}</td>
+              <td>${user.email}</td>
+              <td>${user.class_name}</td>
+              <td>${user.gender == 1 ? 'Nam' : 'Nữ'}</td>
             </tr>
         `;
       }
       let title = 'Danh sách sinh viên trong môn học';
       let body = `
-        <table class="table table-bordered" cellspacing="0" width="100%">
+        <table id="table-subject-user" class="table table-bordered" cellspacing="0" width="100%">
           <thead>
+            <tr>
+              <th><i class="fas fa-search"></i> Tìm kiếm</th>
+              <th colspan="5">
+                <input 
+                type="text" class="form-control" value="" placeholder="Tìm kiếm..." 
+                onkeydown="if (event.keyCode === 13) searchTable(this.value)">
+              </th>
+            </tr>
             <tr>
               <th>Mã sinh viên</th>
               <th>Họ và tên</th>
               <th>Email</th>
+              <th>Lớp</th>
               <th>Giới tính</th>
             </tr>
           </thead>
@@ -78,29 +88,38 @@
       const result = await response.json();
 
       const data = result.data;
-      console.log('🚀 ~ data:', data);
       let userList = '';
       for (const user of data) {
         userList += `
             <tr>
-              <th style="display: none;"><input type="number" class="form-control" id="popupTemplate-subject_id" value="${id}"></th>
-              <th><input type="checkbox" class="form-control" id="popupTemplate-user_ids" value="${user.user_id}"></th>
-              <th>${user.user_id}</th>
-              <th>${user.first_name} ${user.last_name}</th>
-              <th>${user.email}</th>
-              <th>${user.gender == 1 ? 'Nam' : 'Nữ'}</th>
+              <td style="display: none;"><input type="number" class="form-control" id="popupTemplate-subject_id" value="${id}"></td>
+              <td><input type="checkbox" class="form-control" id="popupTemplate-user_ids" value="${user.user_id}"></td>
+              <td>${user.user_id}</td>
+              <td>${user.first_name} ${user.last_name}</td>
+              <td>${user.email}</td>
+              <td>${user.class_name}</td>
+              <td>${user.gender == 1 ? 'Nam' : 'Nữ'}</td>
             </tr>
         `;
       }
       let title = 'Danh sách sinh viên trong môn học';
       let body = `
-        <table class="table table-bordered" cellspacing="0" width="100%">
+        <table id="table-subject-user" class="table table-bordered" cellspacing="0" width="100%">
           <thead>
+            <tr>
+              <th><i class="fas fa-search"></i> Tìm kiếm</th>
+              <th colspan="5">
+                <input 
+                type="text" class="form-control" value="" placeholder="Tìm kiếm..." 
+                onkeydown="if (event.keyCode === 13) searchTable(this.value)">
+              </th>
+            </tr>
             <tr>
               <th></th>
               <th>Mã sinh viên</th>
               <th>Họ và tên</th>
               <th>Email</th>
+              <th>Lớp</th>
               <th>Giới tính</th>
             </tr>
           </thead>
@@ -218,6 +237,25 @@
 
     paginationDataTable(result.data, columns);
   });
-</script>
 
+  function searchTable(value) {
+    const table = document.getElementById('table-subject-user');
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    
+    for (const data of rows) {
+      const cells = data.getElementsByTagName('td')
+      let concatValueCell = '' 
+      for (const cell of cells) {
+        concatValueCell += removeVietnameseTones(cell.innerText)
+      }
+      const searchValue = removeVietnameseTones(value)
+      
+      if (concatValueCell.includes(searchValue)) {
+        data.style.display = ""
+      }else {
+        data.style.display = "none"
+      }
+    }
+  }
+</script>
 <%- include('../partials/footer.ejs') %>

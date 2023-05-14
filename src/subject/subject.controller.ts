@@ -8,6 +8,7 @@ import { CreateSubjectDto } from './dto/create-subject.dto';
 import { DeleteSubjectDto } from './dto/delete-subject.dto';
 import { UpdateSubjectDto } from './dto/update-subject.dto';
 import { SubjectService } from './subject.service';
+import { DeleteUserSubjectDto } from './dto/delete-user-subject.dto';
 
 @Controller('subject')
 @UseGuards(AuthGuard)
@@ -53,6 +54,13 @@ export class SubjectController {
   @Roles(UserRole.ADMIN)
   async addUserSubject(@Body() body: AddUserSubjectDto, @Res() res: any) {
     await this.subjectService.addUserSubject(body);
+    return res.status(HttpStatus.OK).send(new BaseResponse({}));
+  }
+
+  @Post('delete-user')
+  @Roles(UserRole.ADMIN)
+  async deleteUserSubject(@Body() body: DeleteUserSubjectDto, @Res() res: any) {
+    await this.subjectService.deleteUserSubject(body);
     return res.status(HttpStatus.OK).send(new BaseResponse({}));
   }
 
