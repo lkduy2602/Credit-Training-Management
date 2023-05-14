@@ -102,7 +102,7 @@
             </tr>
         `;
       }
-      let title = 'Danh sách sinh viên trong môn học';
+      let title = 'Thêm sinh viên vào môn học';
       let body = `
         <table id="table-subject-user" class="table table-bordered" cellspacing="0" width="100%">
           <thead>
@@ -129,6 +129,57 @@
         </table>
       `;
       let apiSubmitData = 'subject/add-user';
+      templatePopupModal(title, body, apiSubmitData);
+    });
+
+    $(document).on('click', '.delete-user-list', async function () {
+      let id = $(this).data('id');
+      console.log('🚀 ~ id:', id)
+      const response = await fetch(`${URL}/subject/${id}/user-in`);
+      const result = await response.json();
+
+      const data = result.data;
+      let userList = '';
+      for (const user of data) {
+        userList += `
+            <tr>
+              <td style="display: none;"><input type="number" class="form-control" id="popupTemplate-subject_id" value="${id}"></td>
+              <td><input type="checkbox" class="form-control" id="popupTemplate-user_ids" value="${user.user_id}"></td>
+              <td>${user.user_id}</td>
+              <td>${user.first_name} ${user.last_name}</td>
+              <td>${user.email}</td>
+              <td>${user.class_name}</td>
+              <td>${user.gender == 1 ? 'Nam' : 'Nữ'}</td>
+            </tr>
+        `;
+      }
+      let title = 'Xóa sinh viên khỏi môn học';
+      let body = `
+        <table id="table-subject-user" class="table table-bordered" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th><i class="fas fa-search"></i> Tìm kiếm</th>
+              <th colspan="5">
+                <input 
+                type="text" class="form-control" value="" placeholder="Tìm kiếm..." 
+                onkeydown="if (event.keyCode === 13) searchTable(this.value)">
+              </th>
+            </tr>
+            <tr>
+              <th></th>
+              <th>Mã sinh viên</th>
+              <th>Họ và tên</th>
+              <th>Email</th>
+              <th>Lớp</th>
+              <th>Giới tính</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${userList}
+          </tbody>
+        </table>
+      `;
+      let apiSubmitData = 'subject/delete-user';
       templatePopupModal(title, body, apiSubmitData);
     });
 
@@ -223,6 +274,9 @@
                     </a>
                     <a title="Thêm sinh viên" class="btn btn-info btn-circle btn-sm add-list" data-id = '${data.subject_id}'>
                         <i class="fas fa-solid fa-user-plus"></i>
+                    </a>
+                    <a title="Xóa sinh viên" class="btn btn-info btn-circle btn-sm delete-user-list" data-id = '${data.subject_id}'>
+                        <i class="fas fa-solid fa-user-minus"></i>
                     </a>
                     <a title="Chỉnh sửa môn học" class="btn btn-warning btn-circle btn-sm edit-list" data-id = '${data.subject_id}'>
                         <i class="fas fa-edit"></i>
