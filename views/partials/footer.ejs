@@ -43,14 +43,14 @@
 <div class="modal fade" id="templatePopup" tabindex="-1" role="dialog" aria-labelledby="templatePopupModal"
   aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
+    <div class="modal-content" style="max-height: calc(100vh - 1.75rem * 2);">
       <div class="modal-header">
         <h5 class="modal-title" id="titleTemplatePopupModal"></h5>
         <button class="close" type="button" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">×</span>
         </button>
       </div>
-      <div class="modal-body" id="templatePopupBody"></div>
+      <div class="modal-body" id="templatePopupBody" style="flex: 1; overflow: auto;"></div>
       <div class="modal-footer" id="modalFooterTemplate">
       </div>
     </div>
@@ -131,21 +131,25 @@
       submitPostAPI.onclick = async () => { 
         const inputs = queryTemplatePopupBody.querySelectorAll('.form-control')
         const message = queryTemplatePopupBody.querySelector('#messageInPopup')
-        console.log('🚀 ~ message:', message)
 
         let data = {};
+        const arrayIds = []
         inputs.forEach(element => {
-          const key = element.id.split('-')[1]
+          let key = element.id.split('-')[1]
           let value;
           if (element.type =='number') {
             value = parseInt(element.value)
+          }else if(element.type =='checkbox'){
+            if (element.checked) {
+              arrayIds.push(element.value)
+            }
           }else{
             value = element.value
           }
           if (key == 'avatar') {
             value = showAvatar.src
           }
-          data[key] = value
+          data[key] = value ? value : arrayIds
         });
 
         const response = await fetch(`${URL}/${api}/`, {

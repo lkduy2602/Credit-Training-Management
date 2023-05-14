@@ -1,17 +1,16 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { ConfigOptionModule } from './config/config.module';
-import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
 import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionFilter } from './_utils/exceptions/filter.exception';
+import { AppController } from './app.controller';
+import { AuthModule } from './auth/auth.module';
 import { ClassModule } from './class/class.module';
-import { SubjectModule } from './subject/subject.module';
+import { ConfigOptionModule } from './config/config.module';
 import { ScoreModule } from './score/score.module';
-import { SemesterModule } from './semester/semester.module';
+import { SubjectModule } from './subject/subject.module';
+import { UserModule } from './user/user.module';
 
 @Module({
-  imports: [ConfigOptionModule, AuthModule, UserModule, ClassModule, SubjectModule, ScoreModule, SemesterModule],
+  imports: [ConfigOptionModule, AuthModule, UserModule, ClassModule, SubjectModule, ScoreModule],
   controllers: [AppController],
   providers: [
     {

@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClassEntity } from 'src/class/entities/class.entity';
+import { ScoreEntity } from 'src/score/entities/score.entity';
 import { SubjectEntity } from 'src/subject/entities/subject.entity';
 import { UserEntity } from 'src/user/entities/user.entity';
 
@@ -11,12 +12,12 @@ import { UserEntity } from 'src/user/entities/user.entity';
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: process.env.DB_HOST || 'localhost',
-      port: +process.env.DB_PORT || 3306,
-      username: process.env.DB_USERNAME || 'root',
-      password: process.env.DB_PASSWORD || '',
-      database: process.env.DATABASE || 'test',
-      entities: [UserEntity, ClassEntity, SubjectEntity],
+      host: process.env.DB_HOST,
+      port: +process.env.DB_PORT,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DATABASE,
+      entities: [UserEntity, ClassEntity, SubjectEntity, ScoreEntity],
       synchronize: true,
     }),
     MailerModule.forRoot({

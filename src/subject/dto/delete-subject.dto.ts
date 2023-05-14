@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber } from 'class-validator';
 
 export class DeleteSubjectDto {
   @IsNumber({}, { message: 'subject_id phải là số' })

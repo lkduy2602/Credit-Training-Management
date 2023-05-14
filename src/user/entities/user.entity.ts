@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserGender, UserRole, UserStatus } from '../enums/user.enum';
 import { ClassEntity } from 'src/class/entities/class.entity';
+import { ScoreEntity } from 'src/score/entities/score.entity';
 
 @Entity('user')
 export class UserEntity {
@@ -67,4 +68,7 @@ export class UserEntity {
     name: 'class_id',
   })
   class: ClassEntity;
+
+  @OneToMany(() => ScoreEntity, (score) => score.user)
+  score: ScoreEntity;
 }
