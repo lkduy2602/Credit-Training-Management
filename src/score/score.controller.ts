@@ -7,18 +7,20 @@ import { ScoreService } from './score.service';
 export class ScoreController {
   constructor(private readonly scoreService: ScoreService) {}
 
-  @Get()
-  findAll() {
-    return this.scoreService.findAll();
+  @Get(':id/subject')
+  async findAllScoreInSubject(@Param('id') id: string, @Res() res: any) {
+    const data = await this.scoreService.findAllScoreInSubject(+id);
+    return res.status(HttpStatus.OK).send(new BaseResponse({ data }));
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.scoreService.findOne(+id);
+  @Get(':id/detail')
+  async findOneScore(@Param('id') id: string, @Res() res: any) {
+    const data = await this.scoreService.findOneScore(+id);
+    return res.status(HttpStatus.OK).send(new BaseResponse({ data }));
   }
 
-  @Post(':id')
-  async updateScoreUser(@Body() body: UpdateScoreDto, @Res() res:any) {
+  @Post('update-user')
+  async updateScoreUser(@Body() body: UpdateScoreDto, @Res() res: any) {
     await this.scoreService.updateScoreUser(body);
     return res.status(HttpStatus.OK).send(new BaseResponse({}));
   }

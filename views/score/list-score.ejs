@@ -1,0 +1,66 @@
+<%- include('../partials/sidebar.ejs') %> <%- include('../partials/topbar.ejs') %>
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+  <!-- Page Heading -->
+  <!-- <h1 class="h3 mb-2 text-gray-800">Danh sách sinh viên</h1> -->
+
+  <!-- DataTales Example -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
+      <h6 class="m-0 font-weight-bold text-primary">Xem điểm theo môn học</h6>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table id="example" class="table table-bordered" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th>Tên môn học</th>
+              <th>Số tín chỉ</th>
+              <th>Số sinh viên</th>
+              <th></th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /.container-fluid -->
+
+<!-- Core plugin JavaScript-->
+<!-- <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script> -->
+<script>
+  window.addEventListener('load', async () => {
+    const body = document.getElementById('table-body');
+
+    const response = await fetch(`${URL}/subject/`);
+    const result = await response.json();
+
+    const columns = [
+      {
+        data: 'name',
+      },
+      {
+        data: 'no_of_credit',
+      },
+      {
+        data: 'no_of_user',
+      },
+      {
+        data: null,
+        render: function (data, type, row) {
+          return `<div class="text-center">
+                    <a href="/score/user-score/${data.subject_id}" title="Chọn môn học" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                        Chọn môn học
+                    </a>
+                  </div>`;
+        },
+      },
+    ];
+
+    paginationDataTable(result.data, columns);
+  });
+
+</script>
+<%- include('../partials/footer.ejs') %>

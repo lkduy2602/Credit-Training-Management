@@ -70,5 +70,5 @@ export class UserEntity {
   class: ClassEntity;
 
   @OneToMany(() => ScoreEntity, (score) => score.user)
-  score: ScoreEntity;
+  score: ScoreEntity[];
 }

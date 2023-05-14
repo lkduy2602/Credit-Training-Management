@@ -138,7 +138,7 @@
           let key = element.id.split('-')[1]
           let value;
           if (element.type =='number') {
-            value = parseInt(element.value)
+            value = parseFloat(element.value)
           }else if(element.type =='checkbox'){
             if (element.checked) {
               arrayIds.push(element.value)
@@ -149,7 +149,7 @@
           if (key == 'avatar') {
             value = showAvatar.src
           }
-          data[key] = value ? value : arrayIds
+          data[key] = value || value == 0 ? value : arrayIds
         });
 
         const response = await fetch(`${URL}/${api}/`, {
@@ -167,7 +167,6 @@
           if (Array.isArray(result.message)) {
             errors = result.message;
           } else {
-            console.log('sjkashdkjas');
             errors[0] = result.message;
           }
 

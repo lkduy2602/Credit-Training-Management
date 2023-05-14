@@ -1,0 +1,5 @@
+export enum PercentScore {
+  PERCENT_OF_ATTENDANCE_SCORE = 0.1,
+  PERCENT_OF_MIDTERM_SCORE = 0.3,
+  PERCENT_OF_FINAL_SCORE = 0.6,
+}

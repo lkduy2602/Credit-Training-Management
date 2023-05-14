@@ -1,0 +1,217 @@
+<%- include('../partials/sidebar.ejs') %> <%- include('../partials/topbar.ejs') %>
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+  <!-- Page Heading -->
+  <!-- <h1 class="h3 mb-2 text-gray-800">Danh sách sinh viên</h1> -->
+
+  <!-- DataTales Example -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
+      <h6 class="m-0 font-weight-bold text-primary" id="title-user-score"></h6>
+      <a onclick="clickEventShowPopupCreateUser()" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+        ><i class="fas fa-wrench fa-sm text-white-50"></i> Thêm môn học</a
+      >
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table id="example" class="table table-bordered" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th>Mã sinh viên</th>
+              <th>Họ và tên</th>
+              <th>Email</th>
+              <th>Giới tính</th>
+              <th>Điểm chuyên cần (10%)</th>
+              <th>Điểm giữa kỳ (30%)</th>
+              <th>Điểm cuối kỳ (60%)</th>
+              <th>Điểm hệ số 10</th>
+              <th>Điểm số GPA</th>
+              <th>Điểm chữ</th>
+              <th>Kết quả</th>
+              <th></th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- /.container-fluid -->
+
+<!-- Core plugin JavaScript-->
+<!-- <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script> -->
+<script>
+  $(function () {
+    $(document).on('click', '.edit-list', async function () {
+      let id = $(this).data('id');
+      let userName = $(this).data('name');
+      const response = await fetch(`${URL}/score/${id}/detail`);
+      const result = await response.json();
+      const data = result.data;
+      let title = `Cập nhật điểm ${userName}`;
+
+      let body = `
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Điểm chuyên cần (10%)</span>
+        </div>
+        <input type="number" step="0.1" class="form-control" id="popupTemplate-attendance_score" value="${data.attendance_score}">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Điểm giữa kỳ	(30%)</span>
+        </div>
+        <input type="number" step="0.1" class="form-control" id="popupTemplate-midterm_score" value="${data.midterm_score}">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Điểm cuối kỳ	(60%)</span>
+        </div>
+        <input type="number" step="0.1" class="form-control" id="popupTemplate-final_score" value="${data.final_score}">
+      </div>
+      <div style="display: none;" class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Địa chỉ</span>
+        </div>
+        <input type="number" class="form-control" id="popupTemplate-score_id" value="${data.score_id}">
+      </div>
+      `;
+      let apiSubmitData = 'score/update-user';
+      templatePopupModal(title, body, apiSubmitData);
+    });
+  });
+
+  async function clickEventShowPopupCreateUser() {
+    let id = $(this).data('id');
+    let title = 'Thêm môn học';
+    let body = `
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Tên môn học</span>
+        </div>
+        <input type="text" class="form-control" id="popupTemplate-name" value="">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Số tín chỉ</span>
+        </div>
+        <input type="number" class="form-control" id="popupTemplate-no_of_credit" value="">
+      </div>
+      `;
+    let apiSubmitData = 'subject/create';
+    templatePopupModal(title, body, apiSubmitData);
+  }
+
+  window.addEventListener('load', async () => {
+    const pathName = window.location.pathname;
+    const subjectId = pathName.split('/')[pathName.split('/').length - 1];
+
+    const body = document.getElementById('table-body');
+
+    const response = await fetch(`${URL}/score/${subjectId}/subject`);
+    const result = await response.json();
+
+    const subject = await fetch(`${URL}/subject/${subjectId}/detail`);
+    const subjectDetail = await subject.json();
+
+    const title = document.getElementById('title-user-score');
+    title.innerHTML = `Danh sách điểm môn ${subjectDetail.data.name}`;
+
+    const columns = [
+      {
+        data: 'user_id',
+      },
+      {
+        data: null,
+        render: function (data, type, row) {
+          return row.first_name + ' ' + row.last_name;
+        },
+      },
+      {
+        data: 'email',
+      },
+      {
+        data: 'gender',
+        render: function (data, type, row) {
+          if (data == 1) {
+            return 'Nam';
+          } else {
+            return 'Nữ';
+          }
+        },
+      },
+      {
+        data: 'score.attendance_score',
+      },
+      {
+        data: 'score.midterm_score',
+      },
+      {
+        data: 'score.final_score',
+      },
+      {
+        data: 'score.total_score',
+      },
+      {
+        data: 'score.gpa_score',
+      },
+      {
+        data: null,
+        render: function (data, type, row) {
+          if (row.score.gpa_score || row.score.gpa_score == 0) {
+            return convertToLetterGrade(row.score.gpa_score);
+          }
+          return '';
+        },
+      },
+      {
+        data: null,
+        render: function (data, type, row) {
+          if (row.score.gpa_score || row.score.gpa_score == 0) {
+            if (convertToLetterGrade(row.score.gpa_score) =="F") {
+              return 'X'
+            }else{
+              return 'Đạt'
+            }
+          }
+          return '';
+        },
+      },
+      {
+        data: null,
+        render: function (data, type, row) {
+          return `<div class="text-center">
+                    <a title="Chỉnh sửa điểm" class="btn btn-warning btn-circle btn-sm edit-list" data-id='${data.score.score_id}' data-name='${data.first_name} ${data.last_name}'>
+                        <i class="fas fa-edit"></i>
+                    </a>
+                  </div>`;
+        },
+      },
+    ];
+
+    paginationDataTable(result.data, columns);
+  });
+
+  function convertToLetterGrade(gpa) {
+    if (gpa >= 3.7) {
+      return 'A';
+    } else if (gpa >= 3.5) {
+      return 'A-';
+    } else if (gpa >= 3.0) {
+      return 'B+';
+    } else if (gpa >= 2.7) {
+      return 'B';
+    } else if (gpa >= 2.3) {
+      return 'C+';
+    } else if (gpa >= 2.0) {
+      return 'C';
+    } else if (gpa >= 1.5) {
+      return 'D+';
+    } else {
+      return 'F';
+    }
+  }
+</script>
+<%- include('../partials/footer.ejs') %>

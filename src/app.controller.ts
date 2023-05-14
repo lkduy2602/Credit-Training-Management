@@ -47,4 +47,15 @@ export class AppController {
   @UseGuards(AuthGuard)
   @Render('subject/list-subject.ejs')
   listSubjectView() {}
+
+  // Score
+  @Get('score/list')
+  @UseGuards(AuthGuard)
+  @Render('score/list-score.ejs')
+  listScoreView() {}
+
+  @Get('score/user-score/:id')
+  @UseGuards(AuthGuard)
+  @Render('score/user-score.ejs')
+  listUserScoreView() {}
 }

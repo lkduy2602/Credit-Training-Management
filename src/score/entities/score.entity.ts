@@ -31,6 +31,12 @@ export class ScoreEntity {
   })
   total_score: number;
 
+  @Column({
+    type: 'float',
+    nullable: true,
+  })
+  gpa_score: number;
+
   @ManyToOne(() => UserEntity, (user) => user.user_id)
   @JoinColumn({
     name: 'user_id'

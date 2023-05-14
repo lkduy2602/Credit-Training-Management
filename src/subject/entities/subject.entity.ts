@@ -1,7 +1,8 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { SubjectStatus } from '../enums/subject.enum';
 import { removeVietnameseTones } from 'src/_utils/templates/remove-vietnamese-tones.template';
 import { FullTextSearchEntity } from 'src/_utils/templates/full-text-search-entity.template';
+import { ScoreEntity } from 'src/score/entities/score.entity';
 
 @Entity('subject')
 export class SubjectEntity extends FullTextSearchEntity {
@@ -19,6 +20,9 @@ export class SubjectEntity extends FullTextSearchEntity {
 
   @Column()
   no_of_credit: number;
+
+  @OneToMany(() => ScoreEntity, (score) => score.subject)
+  score: ScoreEntity[];
 
   async createFullTextSearch() {
     super.createFullTextSearch(this.name);

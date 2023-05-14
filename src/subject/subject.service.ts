@@ -50,9 +50,20 @@ export class SubjectService {
       order: {
         subject_id: 'DESC',
       },
+      relations: {
+        score: true,
+      },
     });
 
-    return subjectList;
+    const response = subjectList.map((item) => {
+      return {
+        ...item,
+        score: [],
+        no_of_user: item.score.length,
+      };
+    });
+
+    return response;
   }
 
   async findOneSubject(id: number) {

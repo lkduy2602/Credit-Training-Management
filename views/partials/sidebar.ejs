@@ -70,6 +70,13 @@
           </a>
         </li>
 
+        <li class="nav-item" id="sidebar-score-list">
+          <a class="nav-link" href="/score/list">
+            <i class="fas fa-solid fa-star"></i>
+            <span>Danh sách điểm</span>
+          </a>
+        </li>
+
         <!-- Nav Item - Utilities Collapse Menu -->
         <li class="nav-item">
           <a
@@ -165,6 +172,10 @@
             const sidebarSubjectList = document.getElementById('sidebar-subject-list');
             sidebarSubjectList.classList.add('active');
             break;
+          case 'score':
+            const sidebarScoreList = document.getElementById('sidebar-score-list');
+            sidebarScoreList.classList.add('active');
+            break;
           case 'dashboard':
             const sidebarDashboard = document.getElementById('sidebar-dashboard');
             sidebarDashboard.classList.add('active');
@@ -173,4 +184,3 @@
             break;
         }
       </script>
-
