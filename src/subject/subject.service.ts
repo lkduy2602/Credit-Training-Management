@@ -27,6 +27,7 @@ export class SubjectService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {}
+  
   async createSubject(body: CreateSubjectDto) {
     const { name, no_of_credit } = body;
     const isExistSubject = await this.subjectRepository.findOneBy({

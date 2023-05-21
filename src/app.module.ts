@@ -8,9 +8,10 @@ import { ConfigOptionModule } from './config/config.module';
 import { ScoreModule } from './score/score.module';
 import { SubjectModule } from './subject/subject.module';
 import { UserModule } from './user/user.module';
+import { CourseModule } from './course/course.module';
 
 @Module({
-  imports: [ConfigOptionModule, AuthModule, UserModule, ClassModule, SubjectModule, ScoreModule],
+  imports: [ConfigOptionModule, AuthModule, UserModule, ClassModule, SubjectModule, ScoreModule, CourseModule],
   controllers: [AppController],
   providers: [
     {

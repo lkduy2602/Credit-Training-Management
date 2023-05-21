@@ -65,12 +65,14 @@ export class SubjectController {
   }
 
   @Get(':id/user-in')
+  @Roles(UserRole.ADMIN)
   async findAllUserInSubject(@Param('id') id: string, @Res() res: any) {
     const data = await this.subjectService.findAllUserInSubject(+id);
     return res.status(HttpStatus.OK).send(new BaseResponse({ data }));
   }
 
   @Get(':id/user-not-in')
+  @Roles(UserRole.ADMIN)
   async findAllUserNotInSubject(@Param('id') id: string, @Res() res: any) {
     const data = await this.subjectService.findAllUserNotInSubject(+id);
     return res.status(HttpStatus.OK).send(new BaseResponse({ data }));
