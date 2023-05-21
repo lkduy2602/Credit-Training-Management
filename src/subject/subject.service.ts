@@ -6,14 +6,14 @@ import { ScoreEntity } from 'src/score/entities/score.entity';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { UserRole, UserStatus } from 'src/user/enums/user.enum';
 import { LitUserResponse } from 'src/user/responses/list-user.reponse';
-import { Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { AddUserSubjectDto } from './dto/add-user-subject.dto';
 import { CreateSubjectDto } from './dto/create-subject.dto';
 import { DeleteSubjectDto } from './dto/delete-subject.dto';
+import { DeleteUserSubjectDto } from './dto/delete-user-subject.dto';
 import { UpdateSubjectDto } from './dto/update-subject.dto';
 import { SubjectEntity } from './entities/subject.entity';
 import { SubjectStatus } from './enums/subject.enum';
-import { DeleteUserSubjectDto } from './dto/delete-user-subject.dto';
 
 @Injectable()
 export class SubjectService {
@@ -27,7 +27,7 @@ export class SubjectService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {}
-  
+
   async createSubject(body: CreateSubjectDto) {
     const { name, no_of_credit } = body;
     const isExistSubject = await this.subjectRepository.findOneBy({

@@ -1,4 +1,4 @@
-import { Allow, IsNotEmpty, IsNumber, Max, Min } from 'class-validator';
+import { IsNotEmpty, IsNumber, Max, Min } from 'class-validator';
 
 export class UpdateScoreDto {
   @IsNumber({}, { message: 'score_id phải là số' })

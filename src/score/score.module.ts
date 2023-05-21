@@ -9,6 +9,6 @@ import { UserEntity } from 'src/user/entities/user.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([ScoreEntity, SubjectEntity, UserEntity])],
   controllers: [ScoreController],
-  providers: [ScoreService]
+  providers: [ScoreService],
 })
 export class ScoreModule {}

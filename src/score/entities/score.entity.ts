@@ -39,13 +39,13 @@ export class ScoreEntity {
 
   @ManyToOne(() => UserEntity, (user) => user.user_id)
   @JoinColumn({
-    name: 'user_id'
+    name: 'user_id',
   })
   user: UserEntity;
 
   @ManyToOne(() => SubjectEntity, (subject) => subject.subject_id)
   @JoinColumn({
-    name: 'subject_id'
+    name: 'subject_id',
   })
   subject: SubjectEntity;
 }

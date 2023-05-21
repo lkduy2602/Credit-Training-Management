@@ -24,7 +24,7 @@ async function bootstrap() {
   const PROTOCOL = process.env.PROTOCOL || 'http';
   const HOST = process.env.HOST || 'localhost';
   const PORT = process.env.PORT || 8888;
-  
+
   await app.listen(PORT);
   console.log(`🚀 Application running on ~ ${PROTOCOL}://${HOST}:${PORT}/`);
 }

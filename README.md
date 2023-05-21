@@ -56,9 +56,9 @@ DB_PASSWORD =
 DATABASE = credit_training_management
 
 # Config mailer
-MAIL_USER = lkduy2602@gmail.com
-MAIL_PASS = mvvqyvyxzbanjcri
-MAIL_FROM = quanlytinchi@gmail.com
+MAIL_USER = 
+MAIL_PASS = 
+MAIL_FROM = 
 ```
 
 ## Support

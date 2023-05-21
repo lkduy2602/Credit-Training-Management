@@ -1,13 +1,11 @@
-import { Body, Controller, Get, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
-import { BaseResponse } from 'src/_utils/exceptions/base-response.exception';
-import { ForgotPasswordDto } from './dto/forgot-password.dto';
-import { AuthGuard } from 'src/_utils/guards/auth.guard';
-import { Roles } from 'src/_utils/decorators/roles.decorator';
-import { UserRole } from 'src/user/enums/user.enum';
-import { ChangePasswordDto } from './dto/change-password.dto';
+import { Body, Controller, Get, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
 import { GetUserId } from 'src/_utils/decorators/get-user-id.decorator';
+import { BaseResponse } from 'src/_utils/exceptions/base-response.exception';
+import { AuthGuard } from 'src/_utils/guards/auth.guard';
+import { AuthService } from './auth.service';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { LoginDto } from './dto/login.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Controller('auth')

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, Res } from '@nestjs/common';
 import { BaseResponse } from 'src/_utils/exceptions/base-response.exception';
 import { UpdateScoreDto } from './dto/update-score.dto';
 import { ScoreService } from './score.service';

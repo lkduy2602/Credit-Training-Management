@@ -1,34 +1,47 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Res } from '@nestjs/common';
 import { CourseService } from './course.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
+import { BaseResponse } from 'src/_utils/exceptions/base-response.exception';
+import { Roles } from 'src/_utils/decorators/roles.decorator';
+import { UserRole } from 'src/user/enums/user.enum';
 
 @Controller('course')
 export class CourseController {
   constructor(private readonly courseService: CourseService) {}
 
-  @Post()
-  create(@Body() createCourseDto: CreateCourseDto) {
-    return this.courseService.create(createCourseDto);
+  @Post('create')
+  @Roles(UserRole.ADMIN)
+  async createCourse(@Body() body: CreateCourseDto, @Res() res: any) {
+    const data = await this.courseService.createCourse(body);
+    return res.status(HttpStatus.OK).send(new BaseResponse({ data }));
   }
 
   @Get()
-  findAll() {
-    return this.courseService.findAll();
+  @Roles(UserRole.ADMIN)
+  async findAllCourse(@Res() res: any) {
+    const data = await this.courseService.findAllCourse();
+    return res.status(HttpStatus.OK).send(new BaseResponse({ data }));
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.courseService.findOne(+id);
+  @Get(':id/detail')
+  @Roles(UserRole.ADMIN)
+  async findOneCourse(@Param('id') id: string, @Res() res: any) {
+    const data = await this.courseService.findOneCourse(+id);
+    return res.status(HttpStatus.OK).send(new BaseResponse({ data }));
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCourseDto: UpdateCourseDto) {
-    return this.courseService.update(+id, updateCourseDto);
+  @Post('update')
+  @Roles(UserRole.ADMIN)
+  async updateCourse(@Body() body: UpdateCourseDto, @Res() res: any) {
+    const data = await this.courseService.updateCourse(body);
+    return res.status(HttpStatus.OK).send(new BaseResponse({ data }));
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.courseService.remove(+id);
+  @Post(':id/delete')
+  @Roles(UserRole.ADMIN)
+  async removeCourse(@Param('id') id: string, @Res() res: any) {
+    const data = await this.courseService.removeCourse(+id);
+    return res.status(HttpStatus.OK).send(new BaseResponse({ data }));
   }
 }

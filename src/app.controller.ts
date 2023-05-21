@@ -58,4 +58,10 @@ export class AppController {
   @UseGuards(AuthGuard)
   @Render('score/user-score.ejs')
   listUserScoreView() {}
+
+  // Class
+  @Get('class/list')
+  @UseGuards(AuthGuard)
+  @Render('class/list-class.ejs')
+  listClassView() {}
 }

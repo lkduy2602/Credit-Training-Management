@@ -1,17 +1,16 @@
-import * as moment from 'moment';
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from './entities/user.entity';
-import { Repository } from 'typeorm';
 import { ExceptionResponse } from 'src/_utils/exceptions/error-response.exception';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UserRole, UserStatus } from './enums/user.enum';
-import { DeleteUserDto } from './dto/delete-user.dto';
-import { UserResponse } from './responses/user.reponse';
 import { ClassEntity } from 'src/class/entities/class.entity';
 import { ClassStatus } from 'src/class/enums/class.enum';
+import { Repository } from 'typeorm';
+import { CreateUserDto } from './dto/create-user.dto';
+import { DeleteUserDto } from './dto/delete-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserEntity } from './entities/user.entity';
+import { UserRole, UserStatus } from './enums/user.enum';
 import { LitUserResponse } from './responses/list-user.reponse';
+import { UserResponse } from './responses/user.reponse';
 
 @Injectable()
 export class UserService {

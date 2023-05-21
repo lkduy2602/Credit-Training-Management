@@ -1,0 +1,311 @@
+<%- include('../partials/sidebar.ejs') %> <%- include('../partials/topbar.ejs') %>
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+  <!-- Page Heading -->
+  <!-- <h1 class="h3 mb-2 text-gray-800">Danh sách sinh viên</h1> -->
+
+  <!-- DataTales Example -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
+      <h6 class="m-0 font-weight-bold text-primary">Danh sách tất cả lớp học</h6>
+      <a onclick="clickEventShowPopupCreateUser()" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+        ><i class="fas fa-wrench fa-sm text-white-50"></i> Thêm lớp học</a
+      >
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table id="example" class="table table-bordered" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th>Tên lớp học</th>
+              <th></th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /.container-fluid -->
+
+<!-- Core plugin JavaScript-->
+<!-- <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script> -->
+<script>
+  $(function () {
+    $(document).on('click', '.list-list', async function () {
+      let id = $(this).data('id');
+      const response = await fetch(`${URL}/subject/${id}/user-in`);
+      const result = await response.json();
+
+      const data = result.data;
+      console.log('🚀 ~ data:', data);
+      let userList = '';
+      for (const user of data) {
+        userList += `
+            <tr>
+              <td>${user.user_id}</td>
+              <td>${user.first_name} ${user.last_name}</td>
+              <td>${user.email}</td>
+              <td>${user.class_name}</td>
+              <td>${user.gender == 1 ? 'Nam' : 'Nữ'}</td>
+            </tr>
+        `;
+      }
+      let title = 'Danh sách sinh viên trong môn học';
+      let body = `
+        <table id="table-subject-user" class="table table-bordered" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th><i class="fas fa-search"></i> Tìm kiếm</th>
+              <th colspan="5">
+                <input 
+                type="text" class="form-control" value="" placeholder="Tìm kiếm..." 
+                onkeydown="if (event.keyCode === 13) searchTable(this.value)">
+              </th>
+            </tr>
+            <tr>
+              <th>Mã sinh viên</th>
+              <th>Họ và tên</th>
+              <th>Email</th>
+              <th>Lớp</th>
+              <th>Giới tính</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${userList}
+          </tbody>
+        </table>
+      `;
+      let apiSubmitData = '';
+      templatePopupModal(title, body, apiSubmitData);
+    });
+
+    $(document).on('click', '.add-list', async function () {
+      let id = $(this).data('id');
+      const response = await fetch(`${URL}/subject/${id}/user-not-in`);
+      const result = await response.json();
+
+      const data = result.data;
+      let userList = '';
+      for (const user of data) {
+        userList += `
+            <tr>
+              <td style="display: none;"><input type="number" class="form-control" id="popupTemplate-subject_id" value="${id}"></td>
+              <td><input type="checkbox" class="form-control" id="popupTemplate-user_ids" value="${user.user_id}"></td>
+              <td>${user.user_id}</td>
+              <td>${user.first_name} ${user.last_name}</td>
+              <td>${user.email}</td>
+              <td>${user.class_name}</td>
+              <td>${user.gender == 1 ? 'Nam' : 'Nữ'}</td>
+            </tr>
+        `;
+      }
+      let title = 'Thêm sinh viên vào môn học';
+      let body = `
+        <table id="table-subject-user" class="table table-bordered" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th><i class="fas fa-search"></i> Tìm kiếm</th>
+              <th colspan="5">
+                <input 
+                type="text" class="form-control" value="" placeholder="Tìm kiếm..." 
+                onkeydown="if (event.keyCode === 13) searchTable(this.value)">
+              </th>
+            </tr>
+            <tr>
+              <th></th>
+              <th>Mã sinh viên</th>
+              <th>Họ và tên</th>
+              <th>Email</th>
+              <th>Lớp</th>
+              <th>Giới tính</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${userList}
+          </tbody>
+        </table>
+      `;
+      let apiSubmitData = 'subject/add-user';
+      templatePopupModal(title, body, apiSubmitData);
+    });
+
+    $(document).on('click', '.delete-user-list', async function () {
+      let id = $(this).data('id');
+      console.log('🚀 ~ id:', id)
+      const response = await fetch(`${URL}/subject/${id}/user-in`);
+      const result = await response.json();
+
+      const data = result.data;
+      let userList = '';
+      for (const user of data) {
+        userList += `
+            <tr>
+              <td style="display: none;"><input type="number" class="form-control" id="popupTemplate-subject_id" value="${id}"></td>
+              <td><input type="checkbox" class="form-control" id="popupTemplate-user_ids" value="${user.user_id}"></td>
+              <td>${user.user_id}</td>
+              <td>${user.first_name} ${user.last_name}</td>
+              <td>${user.email}</td>
+              <td>${user.class_name}</td>
+              <td>${user.gender == 1 ? 'Nam' : 'Nữ'}</td>
+            </tr>
+        `;
+      }
+      let title = 'Xóa sinh viên khỏi môn học';
+      let body = `
+        <table id="table-subject-user" class="table table-bordered" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th><i class="fas fa-search"></i> Tìm kiếm</th>
+              <th colspan="5">
+                <input 
+                type="text" class="form-control" value="" placeholder="Tìm kiếm..." 
+                onkeydown="if (event.keyCode === 13) searchTable(this.value)">
+              </th>
+            </tr>
+            <tr>
+              <th></th>
+              <th>Mã sinh viên</th>
+              <th>Họ và tên</th>
+              <th>Email</th>
+              <th>Lớp</th>
+              <th>Giới tính</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${userList}
+          </tbody>
+        </table>
+      `;
+      let apiSubmitData = 'subject/delete-user';
+      templatePopupModal(title, body, apiSubmitData);
+    });
+
+    $(document).on('click', '.edit-list', async function () {
+      let id = $(this).data('id');
+      const response = await fetch(`${URL}/subject/${id}/detail`);
+      const result = await response.json();
+      const data = result.data;
+      let title = 'Chỉnh sửa môn học';
+
+      let body = `
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Tên môn học</span>
+        </div>
+        <input type="text" class="form-control" id="popupTemplate-name" value="${data.name}">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Số tín chỉ</span>
+        </div>
+        <input type="number" class="form-control" id="popupTemplate-no_of_credit" value="${data.no_of_credit}">
+      </div>
+      <div style="display: none;" class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Địa chỉ</span>
+        </div>
+        <input type="number" class="form-control" id="popupTemplate-subject_id" value="${data.subject_id}">
+      </div>
+      `;
+      let apiSubmitData = 'subject/update';
+      templatePopupModal(title, body, apiSubmitData);
+    });
+
+    $(document).on('click', '.delete-list', function () {
+      let id = $(this).data('id');
+      let title = 'Xóa môn học';
+      let body = `
+        Bạn có muốn xóa môn học này không
+        <div style="display: none;" class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Địa chỉ</span>
+        </div>
+          <input type="number" class="form-control" id="popupTemplate-subject_id" value="${id}">
+        </div>
+      `;
+      let apiSubmitData = 'subject/delete';
+      templatePopupModal(title, body, apiSubmitData);
+    });
+  });
+
+  async function clickEventShowPopupCreateUser() {
+    let id = $(this).data('id');
+    let title = 'Thêm môn học';
+    let body = `
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Tên môn học</span>
+        </div>
+        <input type="text" class="form-control" id="popupTemplate-name" value="">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Số tín chỉ</span>
+        </div>
+        <input type="number" class="form-control" id="popupTemplate-no_of_credit" value="">
+      </div>
+      `;
+    let apiSubmitData = 'subject/create';
+    templatePopupModal(title, body, apiSubmitData);
+  }
+
+  window.addEventListener('load', async () => {
+    const body = document.getElementById('table-body');
+
+    const response = await fetch(`${URL}/class/`);
+    const result = await response.json();
+
+    const columns = [
+      {
+        data: 'name',
+      },
+      {
+        data: null,
+        render: function (data, type, row) {
+          return `<div class="text-center">
+                    <a title="Danh sách sinh viên" class="btn btn-info btn-circle btn-sm list-list" data-id = '${data.subject_id}'>
+                        <i class="fas fa-solid fa-list"></i>
+                    </a>
+                    <a title="Thêm sinh viên" class="btn btn-info btn-circle btn-sm add-list" data-id = '${data.subject_id}'>
+                        <i class="fas fa-solid fa-user-plus"></i>
+                    </a>
+                    <a title="Xóa sinh viên" class="btn btn-info btn-circle btn-sm delete-user-list" data-id = '${data.subject_id}'>
+                        <i class="fas fa-solid fa-user-minus"></i>
+                    </a>
+                    <a title="Chỉnh sửa môn học" class="btn btn-warning btn-circle btn-sm edit-list" data-id = '${data.subject_id}'>
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a title="Xóa môn học" href="#" class="btn btn-danger btn-circle btn-sm delete-list" data-id = '${data.subject_id}'>
+                        <i class="fas fa-trash"></i>
+                    </a>
+                  </div>`;
+        },
+      },
+    ];
+
+    paginationDataTable(result.data, columns);
+  });
+
+  function searchTable(value) {
+    const table = document.getElementById('table-subject-user');
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    
+    for (const data of rows) {
+      const cells = data.getElementsByTagName('td')
+      let concatValueCell = '' 
+      for (const cell of cells) {
+        concatValueCell += removeVietnameseTones(cell.innerText)
+      }
+      const searchValue = removeVietnameseTones(value)
+      
+      if (concatValueCell.includes(searchValue)) {
+        data.style.display = ""
+      }else {
+        data.style.display = "none"
+      }
+    }
+  }
+</script>
+<%- include('../partials/footer.ejs') %>

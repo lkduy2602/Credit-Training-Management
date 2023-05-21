@@ -1,10 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext, HttpStatus, Inject } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { ExceptionResponse } from '../exceptions/error-response.exception';
-import { DataSource } from 'typeorm';
-import { UserEntity } from 'src/user/entities/user.entity';
+import { CanActivate, ExecutionContext, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { UserEntity } from 'src/user/entities/user.entity';
 import { UserStatus } from 'src/user/enums/user.enum';
+import { DataSource } from 'typeorm';
+import { ExceptionResponse } from '../exceptions/error-response.exception';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -15,7 +14,8 @@ export class AuthGuard implements CanActivate {
 
     const user_id = +req.cookies['user_id'];
     if (!user_id) {
-      throw new ExceptionResponse(HttpStatus.UNAUTHORIZED, 'Bạn phải đăng nhập trước')};
+      throw new ExceptionResponse(HttpStatus.UNAUTHORIZED, 'Bạn phải đăng nhập trước');
+    }
     const user = await this.dataSource.getRepository(UserEntity).findOne({
       where: { user_id, status: UserStatus.ACTIVE },
     });

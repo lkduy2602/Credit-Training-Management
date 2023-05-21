@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber } from "class-validator";
+import { IsNotEmpty, IsNumber } from 'class-validator';
 
 export class DeleteClassDto {
   @IsNumber({}, { message: 'class_id phải là số' })

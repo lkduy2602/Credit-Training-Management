@@ -1,14 +1,12 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Res, UseGuards } from '@nestjs/common';
-import { ClassService } from './class.service';
-import { BaseResponse } from 'src/_utils/exceptions/base-response.exception';
+import { Body, Controller, Get, HttpStatus, Param, Post, Res, UseGuards } from '@nestjs/common';
 import { Roles } from 'src/_utils/decorators/roles.decorator';
-import { UserRole } from 'src/user/enums/user.enum';
+import { BaseResponse } from 'src/_utils/exceptions/base-response.exception';
 import { AuthGuard } from 'src/_utils/guards/auth.guard';
-import { CreateCourseDto } from 'src/course/dto/create-course.dto';
+import { UserRole } from 'src/user/enums/user.enum';
+import { ClassService } from './class.service';
 import { CreateClassDto } from './dto/create-class.dto';
-import { UpdateClassDto } from './dto/update-class.dto';
 import { DeleteClassDto } from './dto/delete-class.dto';
-import { AddUserClassDto } from './dto/add-user-class.dto';
+import { UpdateClassDto } from './dto/update-class.dto';
 
 @Controller('class')
 @UseGuards(AuthGuard)
@@ -47,6 +45,13 @@ export class ClassController {
   @Roles(UserRole.ADMIN)
   async deleteClass(@Body() body: DeleteClassDto, @Res() res: any) {
     const data = await this.classService.deleteClass(body);
+    return res.status(HttpStatus.OK).send(new BaseResponse({ data }));
+  }
+
+  @Get(':id/user-in')
+  @Roles(UserRole.ADMIN)
+  async findAllUserInClass(@Param('id') id: string, @Res() res: any) {
+    const data = await this.classService.findAllUserInClass(+id);
     return res.status(HttpStatus.OK).send(new BaseResponse({ data }));
   }
 }

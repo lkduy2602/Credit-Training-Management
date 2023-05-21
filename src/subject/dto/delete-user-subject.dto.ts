@@ -1,4 +1,4 @@
-import { ArrayNotEmpty, IsArray, IsNotEmpty, IsNumber } from "class-validator";
+import { ArrayNotEmpty, IsArray, IsNotEmpty, IsNumber } from 'class-validator';
 
 export class DeleteUserSubjectDto {
   @IsNumber({}, { message: 'subject_id phải là số' })
@@ -10,7 +10,7 @@ export class DeleteUserSubjectDto {
     message: 'Phải truyền lên 1 mảng',
   })
   @ArrayNotEmpty({
-    message: 'Hãy chọn sinh viên'
+    message: 'Hãy chọn sinh viên',
   })
   user_ids: number[];
 }

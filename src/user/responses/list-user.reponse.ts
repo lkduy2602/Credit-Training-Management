@@ -1,5 +1,5 @@
-import { UserGender, UserRole, UserStatus } from '../enums/user.enum';
 import * as moment from 'moment';
+import { UserGender } from '../enums/user.enum';
 
 export class LitUserResponse {
   user_id: number;
