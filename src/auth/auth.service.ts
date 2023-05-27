@@ -10,6 +10,7 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { LoginDto } from './dto/login.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { comparePassword, hashPassword } from 'src/_utils/templates/hash-password.template';
 
 @Injectable()
 export class AuthService {
@@ -24,10 +25,12 @@ export class AuthService {
     const { email, password } = body;
     const user = await this.userRepository.findOneBy({
       email,
-      password,
       status: UserStatus.ACTIVE,
     });
     if (!user) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'Tài khoản hoặc mật khẩu không đúng');
+
+    const isMatch = await comparePassword(password, user.password);
+    if (!isMatch) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'Tài khoản hoặc mật khẩu không đúng');
 
     return user.user_id;
   }
@@ -43,12 +46,14 @@ export class AuthService {
 
     const new_password = this.generatePassword();
 
+    const hash = await hashPassword(new_password);
+
     await this.userRepository.update(
       {
         email,
       },
       {
-        password: new_password,
+        password: hash,
       },
     );
 
@@ -63,18 +68,19 @@ export class AuthService {
   async changePassword(user_id: number, body: ChangePasswordDto) {
     const { password, new_password } = body;
 
-    const check_old_password = await this.userRepository.findOneBy({
-      password,
+    const user = await this.userRepository.findOneBy({
       user_id,
     });
+    const check_old_password = await comparePassword(password, user.password);
     if (!check_old_password) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'Mật khẩu cũ không đúng');
 
+    const hash = await hashPassword(new_password);
     await this.userRepository.update(
       {
         user_id,
       },
       {
-        password: new_password,
+        password: hash,
       },
     );
   }

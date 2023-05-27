@@ -42,6 +42,10 @@ export class ClassService {
       where: {
         status: ClassStatus.ON,
       },
+      relations: {
+        department: true,
+        course: true,
+      },
     });
     return classList;
   }

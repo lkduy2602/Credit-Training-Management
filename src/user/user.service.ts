@@ -11,6 +11,7 @@ import { UserEntity } from './entities/user.entity';
 import { UserRole, UserStatus } from './enums/user.enum';
 import { LitUserResponse } from './responses/list-user.reponse';
 import { UserResponse } from './responses/user.reponse';
+import { hashPassword } from 'src/_utils/templates/hash-password.template';
 
 @Injectable()
 export class UserService {
@@ -42,6 +43,8 @@ export class UserService {
       throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'Lớp học không tồn tại');
     }
 
+    const hash = await hashPassword(password);
+
     const user = this.userRepository.create({
       address,
       avatar,
@@ -50,7 +53,7 @@ export class UserService {
       first_name,
       gender,
       last_name,
-      password,
+      password: hash,
       role,
       class: getClass,
     });
@@ -133,5 +136,28 @@ export class UserService {
       .orderBy(`substring_index(last_name, ' ', -1)`)
       .getMany();
     return LitUserResponse.mapToList(userList);
+  }
+
+  async generateUserIfEmpty() {
+    const isEmptyUser = (await this.userRepository.find()).length == 0;
+    if (!isEmptyUser) return;
+
+    const user = {
+      email: 'lkduy2602@gmail.com',
+      password: 'duympt123',
+      first_name: 'Lê',
+      last_name: 'Khánh Duy',
+      birthday: '2000-02-26',
+      gender: 1,
+      role: UserRole.ADMIN,
+    };
+
+    const hash = await hashPassword(user.password);
+
+    const save = this.userRepository.create({
+      ...user,
+      password: hash,
+    });
+    await this.userRepository.save(save);
   }
 }

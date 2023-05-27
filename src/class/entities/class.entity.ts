@@ -1,6 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { ClassStatus } from '../enums/class.enum';
 import { FullTextSearchEntity } from 'src/_utils/templates/full-text-search-entity.template';
+import { CourseEntity } from 'src/course/entities/course.entity';
+import { DepartmentEntity } from 'src/department/entities/department.entity';
 
 @Entity('class')
 export class ClassEntity extends FullTextSearchEntity {
@@ -14,9 +16,18 @@ export class ClassEntity extends FullTextSearchEntity {
     default: ClassStatus.ON,
   })
   status: ClassStatus;
-  //   department_id;
-  //   course_id;
-  //   training_system_id;
+
+  @ManyToOne(() => DepartmentEntity, (department) => department.department_id)
+  @JoinColumn({
+    name: 'department_id',
+  })
+  department: DepartmentEntity;
+
+  @ManyToOne(() => CourseEntity, (course) => course.course_id)
+  @JoinColumn({
+    name: 'course_id',
+  })
+  course: CourseEntity;
 
   async createFullTextSearch() {
     super.createFullTextSearch(this.name);

@@ -45,7 +45,7 @@ export class CourseService {
 
     const courseDetail = await this.courseRepository.findOneBy({
       course_id: id,
-      status: ClassStatus.ON,
+      status: CourseStatus.ON,
     });
     if (!courseDetail) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'Khóa học không tồn tại');
 
