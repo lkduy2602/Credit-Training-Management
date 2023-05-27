@@ -1,12 +1,12 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { CreateCourseDto } from './dto/create-course.dto';
-import { UpdateCourseDto } from './dto/update-course.dto';
-import { CourseEntity } from './entities/course.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ExceptionResponse } from 'src/_utils/exceptions/error-response.exception';
 import { removeVietnameseTones } from 'src/_utils/templates/remove-vietnamese-tones.template';
-import { ClassStatus } from 'src/class/enums/class.enum';
+import { ClassEntity } from 'src/class/entities/class.entity';
 import { Repository } from 'typeorm';
+import { CreateCourseDto } from './dto/create-course.dto';
+import { UpdateCourseDto } from './dto/update-course.dto';
+import { CourseEntity } from './entities/course.entity';
 import { CourseStatus } from './enums/course.enum';
 
 @Injectable()
@@ -14,6 +14,9 @@ export class CourseService {
   constructor(
     @InjectRepository(CourseEntity)
     private readonly courseRepository: Repository<CourseEntity>,
+
+    @InjectRepository(ClassEntity)
+    private readonly classRepository: Repository<ClassEntity>,
   ) {}
 
   async createCourse(body: CreateCourseDto) {
@@ -32,11 +35,32 @@ export class CourseService {
   }
 
   async findAllCourse() {
-    const courseList = await this.courseRepository.find({
+    let courseList = await this.courseRepository.find({
       where: {
         status: CourseStatus.ON,
       },
+      order: {
+        name: 'DESC',
+      },
     });
+
+    courseList = await Promise.all(
+      courseList.map(async (course) => {
+        const no_of_class = await this.classRepository.count({
+          where: {
+            course: {
+              course_id: course.course_id,
+            },
+          },
+        });
+
+        return {
+          ...course,
+          no_of_class,
+        };
+      }) as any,
+    );
+
     return courseList;
   }
 

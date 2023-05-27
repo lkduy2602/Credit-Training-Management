@@ -1,0 +1,178 @@
+<%- include('../partials/sidebar.ejs') %> <%- include('../partials/topbar.ejs') %>
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+  <!-- Page Heading -->
+  <!-- <h1 class="h3 mb-2 text-gray-800">Danh sách sinh viên</h1> -->
+
+  <!-- DataTales Example -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
+      <h6 class="m-0 font-weight-bold text-primary">Danh sách tất cả các Khoa</h6>
+      <a onclick="clickEventShowPopupCreateDepartment()" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+        ><i class="fas fa-wrench fa-sm text-white-50"></i> Thêm khoa</a
+      >
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table id="example" class="table table-bordered" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th>Tên khoa</th>
+              <th>Số điện thoại</th>
+              <th>Địa chỉ</th>
+              <th>Số lớp</th>
+              <th></th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /.container-fluid -->
+
+<!-- Core plugin JavaScript-->
+<!-- <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script> -->
+<script>
+  $(function () {
+    $(document).on('click', '.edit-list', async function () {
+      let id = $(this).data('id');
+      const response = await fetch(`${URL}/department/${id}/detail`);
+      const result = await response.json();
+      const data = result.data;
+      let title = 'Chỉnh sửa khoa';
+
+      let body = `
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Tên khoa</span>
+        </div>
+        <input type="text" class="form-control" id="popupTemplate-name" value="${data.name}">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Số điện thoại</span>
+        </div>
+        <input type="text" class="form-control" id="popupTemplate-phone" value="${data.phone}">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Địa chỉ</span>
+        </div>
+        <input type="text" class="form-control" id="popupTemplate-address" value="${data.address}">
+      </div>
+      <div style="display: none;" class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Địa chỉ</span>
+        </div>
+        <input type="number" class="form-control" id="popupTemplate-department_id" value="${data.department_id}">
+      </div>
+      `;
+      let apiSubmitData = 'department/update';
+      templatePopupModal(title, body, apiSubmitData);
+    });
+
+    $(document).on('click', '.delete-list', function () {
+      let id = $(this).data('id');
+      console.log('🚀 ~ id:', id)
+      let title = 'Xóa môn học';
+      let body = `
+        Bạn có muốn xóa môn học này không
+        <div style="display: none;" class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Địa chỉ</span>
+        </div>
+          <input type="number" class="form-control" id="popupTemplate-department_id" value="${id}">
+        </div>
+      `;
+      let apiSubmitData = 'department/delete';
+      templatePopupModal(title, body, apiSubmitData);
+    });
+  });
+
+  async function clickEventShowPopupCreateDepartment() {
+    let id = $(this).data('id');
+    let title = 'Thêm khoa';
+    let body = `
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Tên khoa</span>
+        </div>
+        <input type="text" class="form-control" id="popupTemplate-name" value="">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Số điện thoại</span>
+        </div>
+        <input type="text" class="form-control" id="popupTemplate-phone" value="">
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Địa chỉ</span>
+        </div>
+        <input type="text" class="form-control" id="popupTemplate-address" value="">
+      </div>
+      `;
+    let apiSubmitData = 'department/create';
+    templatePopupModal(title, body, apiSubmitData);
+  }
+
+  window.addEventListener('load', async () => {
+    const body = document.getElementById('table-body');
+
+    const response = await fetch(`${URL}/department/`);
+    const result = await response.json();
+
+    const columns = [
+      {
+        data: 'name',
+      },
+      {
+        data: 'phone',
+      },
+      {
+        data: 'address',
+      },
+      {
+        data: 'no_of_class',
+      },
+      {
+        data: null,
+        render: function (data, type, row) {
+          return `<div class="text-center">
+                    <a title="Chỉnh sửa khoa" class="btn btn-warning btn-circle btn-sm edit-list" data-id = '${data.department_id}'>
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a title="Xóa khoa" href="#" class="btn btn-danger btn-circle btn-sm delete-list" data-id = '${data.department_id}'>
+                        <i class="fas fa-trash"></i>
+                    </a>
+                  </div>`;
+        },
+      },
+    ];
+
+    paginationDataTable(result.data, columns);
+  });
+
+  function searchTable(value) {
+    const table = document.getElementById('table-subject-user');
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    
+    for (const data of rows) {
+      const cells = data.getElementsByTagName('td')
+      let concatValueCell = '' 
+      for (const cell of cells) {
+        concatValueCell += removeVietnameseTones(cell.innerText)
+      }
+      const searchValue = removeVietnameseTones(value)
+      
+      if (concatValueCell.includes(searchValue)) {
+        data.style.display = ""
+      }else {
+        data.style.display = "none"
+      }
+    }
+  }
+</script>
+<%- include('../partials/footer.ejs') %>

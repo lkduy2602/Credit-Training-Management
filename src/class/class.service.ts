@@ -11,6 +11,10 @@ import { ClassEntity } from './entities/class.entity';
 import { ClassStatus } from './enums/class.enum';
 import { UserRole, UserStatus } from 'src/user/enums/user.enum';
 import { LitUserResponse } from 'src/user/responses/list-user.reponse';
+import { CourseEntity } from 'src/course/entities/course.entity';
+import { CourseStatus } from 'src/course/enums/course.enum';
+import { DepartmentEntity } from 'src/department/entities/department.entity';
+import { DepartmentStatus } from 'src/department/enums/department.enum';
 
 @Injectable()
 export class ClassService {
@@ -20,10 +24,16 @@ export class ClassService {
 
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+
+    @InjectRepository(CourseEntity)
+    private readonly courseRepository: Repository<CourseEntity>,
+
+    @InjectRepository(DepartmentEntity)
+    private readonly departmentRepository: Repository<DepartmentEntity>,
   ) {}
 
   async createClass(body: CreateClassDto) {
-    const { name } = body;
+    const { name, course_id, department_id } = body;
 
     const isExistSubject = await this.classRepository.findOneBy({
       full_text_search: removeVietnameseTones(name),
@@ -31,14 +41,28 @@ export class ClassService {
     });
     if (isExistSubject) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'Tên đã tồn tại');
 
+    const courseDetail = await this.courseRepository.findOneBy({
+      course_id: course_id,
+      status: CourseStatus.ON,
+    });
+    if (!courseDetail) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'Khóa học không tồn tại');
+
+    const departmentDetail = await this.departmentRepository.findOneBy({
+      department_id: department_id,
+      status: DepartmentStatus.ON,
+    });
+    if (!departmentDetail) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'Khóa học không tồn tại');
+
     const saveClass = this.classRepository.create({
       name: name,
+      course: courseDetail,
+      department: departmentDetail,
     });
     await this.classRepository.save(saveClass);
   }
 
   async getListClass() {
-    const classList = await this.classRepository.find({
+    let classList = await this.classRepository.find({
       where: {
         status: ClassStatus.ON,
       },
@@ -47,15 +71,43 @@ export class ClassService {
         course: true,
       },
     });
+
+    classList = await Promise.all(
+      classList.map(async (item) => {
+        const no_of_student = await this.userRepository.count({
+          where: {
+            class: {
+              class_id: item.class_id,
+            },
+          },
+        });
+
+        return {
+          ...item,
+          no_of_student,
+        };
+      }) as any,
+    );
     return classList;
   }
 
   async findOneClass(id: number) {
     if (!id) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'id không tồn tại');
 
-    const subjectDetail = await this.classRepository.findOneBy({
-      class_id: id,
-      status: ClassStatus.ON,
+    const subjectDetail = await this.classRepository.findOne({
+      where: {
+        class_id: id,
+        status: ClassStatus.ON,
+      },
+      relations: {
+        course: true,
+        department: true,
+      },
+      order: {
+        course: {
+          name: 'DESC',
+        },
+      },
     });
     if (!subjectDetail) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'Môn học không tồn tại');
 
@@ -63,7 +115,7 @@ export class ClassService {
   }
 
   async updateClass(body: UpdateClassDto) {
-    const { class_id, name } = body;
+    const { class_id, name, course_id, department_id } = body;
 
     const classDetail = await this.classRepository.findOne({
       where: {
@@ -81,9 +133,23 @@ export class ClassService {
       if (isExistClass) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'Tên đã tồn tại');
     }
 
+    const courseDetail = await this.courseRepository.findOneBy({
+      course_id: course_id,
+      status: CourseStatus.ON,
+    });
+    if (!courseDetail) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'Khóa học không tồn tại');
+
+    const departmentDetail = await this.departmentRepository.findOneBy({
+      department_id: department_id,
+      status: DepartmentStatus.ON,
+    });
+    if (!departmentDetail) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'Khóa học không tồn tại');
+
     const update = this.classRepository.create({
       ...classDetail,
       name,
+      course: courseDetail,
+      department: departmentDetail,
     });
     await this.classRepository.save(update);
   }

@@ -10,6 +10,7 @@ export class AuthGuard implements CanActivate {
   constructor(@Inject(DataSource) private readonly dataSource: DataSource, private readonly reflector: Reflector) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
+    const res = context.switchToHttp().getResponse();
     const roles = this.reflector.get<string[]>('roles', context.getHandler());
 
     const user_id = +req.cookies['user_id'];

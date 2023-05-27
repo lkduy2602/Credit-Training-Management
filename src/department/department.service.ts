@@ -9,12 +9,16 @@ import { CourseStatus } from 'src/course/enums/course.enum';
 import { Repository } from 'typeorm';
 import { DepartmentEntity } from './entities/department.entity';
 import { DepartmentStatus } from './enums/department.enum';
+import { ClassEntity } from 'src/class/entities/class.entity';
 
 @Injectable()
 export class DepartmentService {
   constructor(
     @InjectRepository(DepartmentEntity)
     private readonly departmentRepository: Repository<DepartmentEntity>,
+
+    @InjectRepository(ClassEntity)
+    private readonly classRepository: Repository<ClassEntity>,
   ) {}
 
   async createDepartment(body: CreateDepartmentDto) {
@@ -35,11 +39,31 @@ export class DepartmentService {
   }
 
   async findAllDepartment() {
-    const departmentList = await this.departmentRepository.find({
+    let departmentList = await this.departmentRepository.find({
       where: {
         status: DepartmentStatus.ON,
       },
+      order: {
+        department_id: 'DESC',
+      },
     });
+
+    departmentList = await Promise.all(
+      departmentList.map(async (department) => {
+        const no_of_class = await this.classRepository.count({
+          where: {
+            department: {
+              department_id: department.department_id,
+            },
+          },
+        });
+
+        return {
+          ...department,
+          no_of_class,
+        };
+      }) as any,
+    );
     return departmentList;
   }
 
@@ -50,7 +74,7 @@ export class DepartmentService {
       department_id: id,
       status: DepartmentStatus.ON,
     });
-    if (!departmentDetail) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'Khóa học không tồn tại');
+    if (!departmentDetail) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'Khoa không tồn tại');
 
     return departmentDetail;
   }
@@ -61,7 +85,7 @@ export class DepartmentService {
       department_id,
       status: DepartmentStatus.ON,
     });
-    if (!departmentDetail) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'Khóa học không tồn tại');
+    if (!departmentDetail) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'Khoa không tồn tại');
 
     if (departmentDetail.full_text_search != removeVietnameseTones(name)) {
       const isExistCourse = await this.departmentRepository.findOneBy({
@@ -85,7 +109,7 @@ export class DepartmentService {
       department_id: id,
       status: DepartmentStatus.ON,
     });
-    if (!departmentDetail) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'Khóa học không tồn tại');
+    if (!departmentDetail) throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'Khoa không tồn tại');
 
     const update = this.departmentRepository.create({
       ...departmentDetail,

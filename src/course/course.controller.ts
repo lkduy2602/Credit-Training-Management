@@ -5,6 +5,7 @@ import { UpdateCourseDto } from './dto/update-course.dto';
 import { BaseResponse } from 'src/_utils/exceptions/base-response.exception';
 import { Roles } from 'src/_utils/decorators/roles.decorator';
 import { UserRole } from 'src/user/enums/user.enum';
+import { DeleteCourseDto } from './dto/delete-department.dto';
 
 @Controller('course')
 export class CourseController {
@@ -38,10 +39,10 @@ export class CourseController {
     return res.status(HttpStatus.OK).send(new BaseResponse({ data }));
   }
 
-  @Post(':id/delete')
+  @Post('delete')
   @Roles(UserRole.ADMIN)
-  async removeCourse(@Param('id') id: string, @Res() res: any) {
-    const data = await this.courseService.removeCourse(+id);
+  async removeCourse(@Body() body: DeleteCourseDto, @Res() res: any) {
+    const data = await this.courseService.removeCourse(+body.course_id);
     return res.status(HttpStatus.OK).send(new BaseResponse({ data }));
   }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { Controller, Get, Render, Res, UseGuards } from '@nestjs/common';
 import { GetUserId } from './_utils/decorators/get-user-id.decorator';
 import { AuthGuard } from './_utils/guards/auth.guard';
@@ -64,4 +65,16 @@ export class AppController {
   @UseGuards(AuthGuard)
   @Render('class/list-class.ejs')
   listClassView() {}
+
+  // Department
+  @Get('department/list')
+  @UseGuards(AuthGuard)
+  @Render('department/list-department.ejs')
+  listDepartmentView() {}
+
+  // Course
+  @Get('course/list')
+  @UseGuards(AuthGuard)
+  @Render('course/list-course.ejs')
+  listCourseView() {}
 }

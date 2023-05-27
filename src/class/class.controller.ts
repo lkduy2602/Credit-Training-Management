@@ -28,7 +28,6 @@ export class ClassController {
   }
 
   @Get(':id/detail')
-  @Roles(UserRole.ADMIN)
   async findOneClass(@Param('id') id: string, @Res() res: any) {
     const data = await this.classService.findOneClass(+id);
     return res.status(HttpStatus.OK).send(new BaseResponse({ data }));

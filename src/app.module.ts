@@ -10,9 +10,10 @@ import { SubjectModule } from './subject/subject.module';
 import { UserModule } from './user/user.module';
 import { CourseModule } from './course/course.module';
 import { DepartmentModule } from './department/department.module';
+import { ReportModule } from './report/report.module';
 
 @Module({
-  imports: [ConfigOptionModule, AuthModule, UserModule, ClassModule, SubjectModule, ScoreModule, CourseModule, DepartmentModule],
+  imports: [ConfigOptionModule, AuthModule, UserModule, ClassModule, SubjectModule, ScoreModule, CourseModule, DepartmentModule, ReportModule],
   controllers: [AppController],
   providers: [
     {

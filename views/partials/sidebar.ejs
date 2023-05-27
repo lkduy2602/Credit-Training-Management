@@ -23,6 +23,7 @@
     <link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script src="https://cdn.datatables.net/v/dt/dt-1.10.15/datatables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/chart.umd.js"></script>
   </head>
 
   <body id="page-top">
@@ -63,6 +64,20 @@
           </a>
         </li>
 
+        <li class="nav-item" id="sidebar-department-list">
+          <a class="nav-link" href="/department/list">
+            <i class="fas fa-solid fa-building"></i>
+            <span>Danh sách khoa</span>
+          </a>
+        </li>
+
+        <li class="nav-item" id="sidebar-course-list">
+          <a class="nav-link" href="/course/list">
+            <i class="fas fa-solid fa-graduation-cap"></i>
+            <span>Danh sách khóa học</span>
+          </a>
+        </li>
+
         <li class="nav-item" id="sidebar-class-list">
           <a class="nav-link" href="/class/list">
             <i class="fas fa-solid fa-university"></i>
@@ -82,6 +97,28 @@
             <i class="fas fa-solid fa-star"></i>
             <span>Danh sách điểm</span>
           </a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider" />
+
+        <li class="nav-item">
+          <a
+            class="nav-link collapsed"
+            href="#"
+            data-toggle="collapse"
+            data-target="#collapsePages"
+            aria-expanded="false"
+            aria-controls="collapsePages"
+          >
+            <i class="fas fa-fw fa-chart-area"></i>
+            <span>Báo cáo</span>
+          </a>
+          <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar" style="">
+            <div class="bg-white py-2 collapse-inner rounded">
+              <a class="collapse-item" href="login.html">Môn học</a>
+            </div>
+          </div>
         </li>
 
         <!-- Divider -->
@@ -113,6 +150,14 @@
           case 'class':
             const sidebarClassList = document.getElementById('sidebar-class-list');
             sidebarClassList.classList.add('active');
+            break;
+          case 'department':
+            const sidebarDepartmentList = document.getElementById('sidebar-department-list');
+            sidebarDepartmentList.classList.add('active');
+            break;
+          case 'course':
+            const sidebarCourseList = document.getElementById('sidebar-course-list');
+            sidebarCourseList.classList.add('active');
             break;
           case 'dashboard':
             const sidebarDashboard = document.getElementById('sidebar-dashboard');
