@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { DepartmentStatus } from '../enums/department.enum';
 import { FullTextSearchEntity } from 'src/_utils/templates/full-text-search-entity.template';
+import { ClassEntity } from 'src/class/entities/class.entity';
 
 @Entity('department')
 export class DepartmentEntity extends FullTextSearchEntity {
@@ -21,6 +22,9 @@ export class DepartmentEntity extends FullTextSearchEntity {
     default: DepartmentStatus.ON,
   })
   status: number;
+
+  @OneToMany(() => ClassEntity, (c) => c.department)
+  class: ClassEntity[];
 
   async createFullTextSearch() {
     super.createFullTextSearch(this.name);

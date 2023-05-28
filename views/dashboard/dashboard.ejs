@@ -85,12 +85,12 @@
       <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-          <h6 class="m-0 font-weight-bold text-primary">Tỉ lệ sinh viên cửa từng niên khóa</h6>
+          <h6 class="m-0 font-weight-bold text-primary">Tỉ lệ sinh viên cửa từng khoa</h6>
         </div>
         <!-- Card Body -->
         <div class="card-body">
           <div class="chart-pie pt-4 pb-2">
-            <canvas id="myPieChart"></canvas>
+            <canvas id="noOfStudentDepartmentChart"></canvas>
           </div>
         </div>
       </div>
@@ -114,6 +114,24 @@
 
     const responseNoOfStudentSubject = await fetch(`${URL}/report/no-of-student-subject`);
     const resultNoOfStudentSubject = (await responseNoOfStudentSubject.json()).data;
+
+    const responseNoOfStudentDepartment= await fetch(`${URL}/report/no-of-student-department`);
+    const resultNoOfStudentDepartment = (await responseNoOfStudentDepartment.json()).data;
+
+
+    new Chart(document.getElementById('noOfStudentDepartmentChart'), {
+      type: 'doughnut',
+      data: {
+        labels: resultNoOfStudentDepartment.map(item=> item.name),
+        datasets: [
+          {
+            label: 'My First Dataset',
+            data: resultNoOfStudentDepartment.map(item=> item.no_of_student),
+            hoverOffset: 4,
+          },
+        ],
+      },
+    });
 
     new Chart(document.getElementById('no-of-student-subject-chart'), {
       type: 'bar',

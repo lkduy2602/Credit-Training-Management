@@ -9,6 +9,7 @@ import { UserEntity } from 'src/user/entities/user.entity';
 import { UserStatus, UserRole } from 'src/user/enums/user.enum';
 import { ClassEntity } from 'src/class/entities/class.entity';
 import { ClassStatus } from 'src/class/enums/class.enum';
+import { DepartmentEntity } from 'src/department/entities/department.entity';
 
 @Injectable()
 export class ReportService {
@@ -21,6 +22,9 @@ export class ReportService {
 
     @InjectRepository(ClassEntity)
     private readonly classRepository: Repository<ClassEntity>,
+
+    @InjectRepository(DepartmentEntity)
+    private readonly departmentRepository: Repository<DepartmentEntity>,
   ) {}
 
   async getNoOfAll() {
@@ -75,5 +79,38 @@ export class ReportService {
     return subjectList;
   }
 
-  async getNoOfStudentsRegisteredByCourse(){}
+  async getNoOfStudentsRegisteredByDepartment() {
+    try {
+      const result = await this.departmentRepository.find({
+        where: {
+          class: {
+            status: ClassStatus.ON,
+            user: {
+              status: UserStatus.ACTIVE,
+            },
+          },
+        },
+        relations: {
+          class: {
+            user: true,
+          },
+        },
+      });
+
+      const noOfStudentDepartment = result.map((item) => {
+        const noOfStudent = item.class.reduce((previousValue, currentValue) => {
+          return previousValue + currentValue.user.length;
+        }, 0);
+
+        return {
+          name: item.name,
+          no_of_student: noOfStudent,
+        };
+      });
+
+      return noOfStudentDepartment;
+    } catch (error) {
+      console.log('🚀 ~ error:', error);
+    }
+  }
 }

@@ -1,8 +1,9 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ClassStatus } from '../enums/class.enum';
 import { FullTextSearchEntity } from 'src/_utils/templates/full-text-search-entity.template';
 import { CourseEntity } from 'src/course/entities/course.entity';
 import { DepartmentEntity } from 'src/department/entities/department.entity';
+import { UserEntity } from 'src/user/entities/user.entity';
 
 @Entity('class')
 export class ClassEntity extends FullTextSearchEntity {
@@ -28,6 +29,10 @@ export class ClassEntity extends FullTextSearchEntity {
     name: 'course_id',
   })
   course: CourseEntity;
+
+  @OneToMany(() => UserEntity, (user) => user.class)
+  user: UserEntity[];
+
 
   async createFullTextSearch() {
     super.createFullTextSearch(this.name);

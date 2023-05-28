@@ -27,10 +27,10 @@ export class ReportController {
     return res.status(HttpStatus.OK).send(new BaseResponse({ data }));
   }
 
-  @Get('no-of-student-course')
+  @Get('no-of-student-department')
   @Roles(UserRole.ADMIN)
   async getNoOfStudentsRegisteredByCourse(@Res() res: any) {
-    const data = await this.reportService.getNoOfStudentsRegisteredByCourse();
+    const data = await this.reportService.getNoOfStudentsRegisteredByDepartment();
     return res.status(HttpStatus.OK).send(new BaseResponse({ data }));
   }
 }

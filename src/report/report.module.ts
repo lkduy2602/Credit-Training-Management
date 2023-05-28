@@ -5,9 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SubjectEntity } from 'src/subject/entities/subject.entity';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { ClassEntity } from 'src/class/entities/class.entity';
+import { DepartmentEntity } from 'src/department/entities/department.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([SubjectEntity, UserEntity, ClassEntity])],
+  imports: [TypeOrmModule.forFeature([SubjectEntity, UserEntity, ClassEntity,DepartmentEntity])],
   controllers: [ReportController],
   providers: [ReportService]
 })
