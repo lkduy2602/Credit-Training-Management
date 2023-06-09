@@ -36,7 +36,7 @@
   $(function () {
     $(document).on('click', '.list-list', async function () {
       let id = $(this).data('id');
-      console.log('🚀 ~ id:', id)
+      console.log('🚀 ~ id:', id);
       const response = await fetch(`${URL}/subject/${id}/user-in`);
       const result = await response.json();
 
@@ -101,23 +101,44 @@
   });
 
   async function clickEventShowPopupCreateUser() {
-    let id = $(this).data('id');
-    let title = 'Thêm môn học';
+    const response = await fetch(`${URL}/subject/user-not-register`);
+    const result = await response.json();
+
+    const data = result.data;
+    let subjectList = '';
+    for (const subject of data) {
+      subjectList += `
+            <tr>
+              <td><input type="checkbox" class="form-control" id="popupTemplate-subject_ids" value="${subject.subject_id}"></td>
+              <td>${subject.name}</td>
+              <td>${subject.no_of_credit}</td>
+            </tr>
+        `;
+    }
+    let title = 'Đăng ký môn học';
     let body = `
-      <div class="input-group mb-3">
-        <div class="input-group-prepend">
-          <span class="input-group-text">Tên môn học</span>
-        </div>
-        <input type="text" class="form-control" id="popupTemplate-name" value="">
-      </div>
-      <div class="input-group mb-3">
-        <div class="input-group-prepend">
-          <span class="input-group-text">Số tín chỉ</span>
-        </div>
-        <input type="number" class="form-control" id="popupTemplate-no_of_credit" value="">
-      </div>
+        <table id="table-subject-user" class="table table-bordered" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th><i class="fas fa-search"></i> Tìm kiếm</th>
+              <th colspan="5">
+                <input 
+                type="text" class="form-control" value="" placeholder="Tìm kiếm..." 
+                onkeydown="if (event.keyCode === 13) searchTable(this.value)">
+              </th>
+            </tr>
+            <tr>
+              <th></th>
+              <th>Tên môn học</th>
+              <th>Số tín chỉ</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${subjectList}
+          </tbody>
+        </table>
       `;
-    let apiSubmitData = 'subject/create';
+    let apiSubmitData = 'subject/user-register';
     templatePopupModal(title, body, apiSubmitData);
   }
 
@@ -155,19 +176,19 @@
   function searchTable(value) {
     const table = document.getElementById('table-subject-user');
     const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
-    
+
     for (const data of rows) {
-      const cells = data.getElementsByTagName('td')
-      let concatValueCell = '' 
+      const cells = data.getElementsByTagName('td');
+      let concatValueCell = '';
       for (const cell of cells) {
-        concatValueCell += removeVietnameseTones(cell.innerText)
+        concatValueCell += removeVietnameseTones(cell.innerText);
       }
-      const searchValue = removeVietnameseTones(value)
-      
+      const searchValue = removeVietnameseTones(value);
+
       if (concatValueCell.includes(searchValue)) {
-        data.style.display = ""
-      }else {
-        data.style.display = "none"
+        data.style.display = '';
+      } else {
+        data.style.display = 'none';
       }
     }
   }

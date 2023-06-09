@@ -6,7 +6,7 @@ import { ScoreEntity } from 'src/score/entities/score.entity';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { UserRole, UserStatus } from 'src/user/enums/user.enum';
 import { LitUserResponse } from 'src/user/responses/list-user.reponse';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { AddUserSubjectDto } from './dto/add-user-subject.dto';
 import { CreateSubjectDto } from './dto/create-subject.dto';
 import { DeleteSubjectDto } from './dto/delete-subject.dto';
@@ -273,6 +273,68 @@ export class SubjectService {
     });
 
     return subject_user_register;
+  }
+
+  async findAllSubjectUserNotRegister(user_id: number) {
+    const subject_user_register = await this.subjectRepository.find({
+      where: {
+        score: {
+          user: {
+            user_id,
+          },
+        },
+        status: SubjectStatus.ACTIVE,
+      },
+      order: {
+        subject_id: 'DESC',
+      },
+    });
+
+    const subject_ids = subject_user_register.map((subject) => subject.subject_id);
+
+    const subject_not_register = this.subjectRepository.createQueryBuilder('subject').where('subject.status = :status', {
+      status: SubjectStatus.ACTIVE,
+    });
+
+    if (subject_ids.length > 0)
+      subject_not_register.andWhere('subject.subject_id NOT IN (:...subject_ids)', {
+        subject_ids,
+      });
+
+    return await subject_not_register.getMany();
+  }
+
+  async postSubjectUserRegister(user_id: number, subject_ids: number[]) {
+    await Promise.all(
+      subject_ids.map(async (item) => {
+        const subject = await this.subjectRepository.findOne({
+          where: {
+            subject_id: +item,
+          },
+        });
+        if (!subject) return;
+
+        const isExistUserInSubject = await this.scoreRepository.findOneBy({
+          user: {
+            user_id: user_id,
+          },
+          subject: {
+            subject_id: +item,
+          },
+        });
+        if (isExistUserInSubject) return;
+
+        const addUserToSubject = this.scoreRepository.create({
+          user: {
+            user_id: user_id,
+          },
+          subject: {
+            subject_id: +item,
+          },
+        });
+        await this.scoreRepository.save(addUserToSubject);
+      }),
+    );
   }
 
   async deleteSubjectUserRegister(user_id: number, subject_id: number) {
