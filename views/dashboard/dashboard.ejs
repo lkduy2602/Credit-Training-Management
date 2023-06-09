@@ -149,6 +149,40 @@
       </div>
     </div>
   </div>
+
+  <div class="row role-user">
+    <!-- Area Chart -->
+    <div class="col-xl-8 col-lg-7">
+      <div class="card shadow mb-4">
+        <!-- Card Header - Dropdown -->
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+          <h6 class="m-0 font-weight-bold text-primary">Điểm của tất cả các môn</h6>
+        </div>
+        <!-- Card Body -->
+        <div class="card-body">
+          <div class="chart-area">
+            <canvas id="all-score-user-subject"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pie Chart -->
+    <div class="col-xl-4 col-lg-5">
+      <div class="card shadow mb-4">
+        <!-- Card Header - Dropdown -->
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+          <h6 class="m-0 font-weight-bold text-primary">Tỉ lệ điểm theo GPA</h6>
+        </div>
+        <!-- Card Body -->
+        <div class="card-body">
+          <div class="chart-pie pt-4 pb-2">
+            <canvas id="pass-fail-credit"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <!-- /.container-fluid -->
 
@@ -220,7 +254,47 @@
     avgScoreGpaElement.innerHTML = resultTotalScoreUser.data.total_score_gpa;
     noOfCreditPassElement.innerHTML = resultTotalScoreUser.data.no_of_credit_pass;
 
+    const responsesAllScoreUserSubject = await fetch(`${URL}/score/user-score`);
+    const resultAllScoreUserSubject = (await responsesAllScoreUserSubject.json()).data;
 
+    new Chart(document.getElementById('all-score-user-subject'), {
+      type: 'bar',
+      data: {
+        labels: resultAllScoreUserSubject.map((item) => item.subject.name),
+        datasets: [
+          {
+            label: 'Điểm',
+            data: resultAllScoreUserSubject.map((item) => item.total_score),
+
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+          },
+        },
+      },
+    });
+
+    const responsesPassFailCredit = await fetch(`${URL}/report/pass-fail-credit`);
+    const resultPassFailCredit = (await responsesPassFailCredit.json()).data;
+
+    new Chart(document.getElementById('pass-fail-credit'), {
+      type: 'doughnut',
+      data: {
+        labels: resultPassFailCredit.map((item) => item.result),
+        datasets: [
+          {
+            label: 'My First Dataset',
+            data: resultPassFailCredit.map((item) => item.no_of),
+            hoverOffset: 4,
+          },
+        ],
+      },
+    });
   });
 </script>
 

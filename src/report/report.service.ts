@@ -10,6 +10,7 @@ import { UserStatus, UserRole } from 'src/user/enums/user.enum';
 import { ClassEntity } from 'src/class/entities/class.entity';
 import { ClassStatus } from 'src/class/enums/class.enum';
 import { DepartmentEntity } from 'src/department/entities/department.entity';
+import { ScoreEntity } from 'src/score/entities/score.entity';
 
 @Injectable()
 export class ReportService {
@@ -25,6 +26,9 @@ export class ReportService {
 
     @InjectRepository(DepartmentEntity)
     private readonly departmentRepository: Repository<DepartmentEntity>,
+
+    @InjectRepository(ScoreEntity)
+    private readonly scoreRepository: Repository<ScoreEntity>,
   ) {}
 
   async getNoOfAll() {
@@ -112,5 +116,41 @@ export class ReportService {
     } catch (error) {
       console.log('🚀 ~ error:', error);
     }
+  }
+
+  async getPassFailCreditByUser(user_id: number) {
+    const user_score = await this.scoreRepository.find({
+      where: {
+        user: {
+          user_id: user_id,
+        },
+      },
+      relations: {
+        subject: true,
+      },
+    });
+
+    let no_of_pass = 0;
+    let no_of_fail = 0;
+    user_score.forEach((score) => {
+      if (score.gpa_score || score.gpa_score == 0) {
+        if (score.gpa_score < 2) {
+          no_of_fail += 1;
+        } else {
+          no_of_pass += 1;
+        }
+      }
+    });
+
+    return [
+      {
+        result: 'Đạt',
+        no_of: no_of_pass,
+      },
+      {
+        result: 'X',
+        no_of: no_of_fail,
+      },
+    ];
   }
 }

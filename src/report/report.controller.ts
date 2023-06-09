@@ -32,4 +32,10 @@ export class ReportController {
     const data = await this.reportService.getNoOfStudentsRegisteredByDepartment();
     return res.status(HttpStatus.OK).send(new BaseResponse({ data }));
   }
+
+  @Get('pass-fail-credit')
+  async getPassFailCreditByUser(@GetUserId() user_id: number, @Res() res: any) {
+    const data = await this.reportService.getPassFailCreditByUser(+user_id);
+    return res.status(HttpStatus.OK).send(new BaseResponse({ data }));
+  }
 }
