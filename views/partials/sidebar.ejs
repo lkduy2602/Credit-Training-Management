@@ -57,50 +57,58 @@
         <div class="sidebar-heading">Quản lý</div>
 
         <!-- Nav Item - Pages Collapse Menu -->
-        <li class="nav-item" id="sidebar-user-list">
+        <li class="nav-item role-admin" id="sidebar-user-list">
           <a class="nav-link" href="/user/list">
             <i class="fas fa-solid fa-user-graduate"></i>
             <span>Danh sách sinh viên</span>
           </a>
         </li>
 
-        <li class="nav-item" id="sidebar-department-list">
+        <li class="nav-item role-admin" id="sidebar-department-list">
           <a class="nav-link" href="/department/list">
             <i class="fas fa-solid fa-building"></i>
             <span>Danh sách khoa</span>
           </a>
         </li>
 
-        <li class="nav-item" id="sidebar-course-list">
+        <li class="nav-item role-admin" id="sidebar-course-list">
           <a class="nav-link" href="/course/list">
             <i class="fas fa-solid fa-graduation-cap"></i>
             <span>Danh sách khóa học</span>
           </a>
         </li>
 
-        <li class="nav-item" id="sidebar-class-list">
+        <li class="nav-item role-admin" id="sidebar-class-list">
           <a class="nav-link" href="/class/list">
             <i class="fas fa-solid fa-university"></i>
             <span>Danh sách lớp</span>
           </a>
         </li>
 
-        <li class="nav-item" id="sidebar-subject-list">
+        <li class="nav-item role-admin" id="sidebar-subject-list">
           <a class="nav-link" href="/subject/list">
             <i class="fas fa-solid fa-book"></i>
             <span>Danh sách môn học</span>
           </a>
         </li>
 
-        <li class="nav-item" id="sidebar-score-list">
+        <li class="nav-item role-admin" id="sidebar-score-list">
           <a class="nav-link" href="/score/list">
             <i class="fas fa-solid fa-star"></i>
             <span>Danh sách điểm</span>
           </a>
         </li>
 
+        <!-- Nav Item - Pages Collapse Menu -->
+        <li class="nav-item role-user" id="sidebar-subject-list-user">
+          <a class="nav-link" href="/subject/list/user">
+            <i class="fas fa-solid fa-book"></i>
+            <span>Môn học đã đăng ký</span>
+          </a>
+        </li>
+
         <!-- Divider -->
-        <hr class="sidebar-divider" />
+        <!-- <hr class="sidebar-divider" />
 
         <li class="nav-item">
           <a
@@ -119,7 +127,7 @@
               <a class="collapse-item" href="login.html">Môn học</a>
             </div>
           </div>
-        </li>
+        </li> -->
 
         <!-- Divider -->
         <hr class="sidebar-divider" />
@@ -142,6 +150,8 @@
           case 'subject':
             const sidebarSubjectList = document.getElementById('sidebar-subject-list');
             sidebarSubjectList.classList.add('active');
+            const sidebarSubjectListUser = document.getElementById('sidebar-subject-list-user');
+            sidebarSubjectListUser.classList.add('active');
             break;
           case 'score':
             const sidebarScoreList = document.getElementById('sidebar-score-list');

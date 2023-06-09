@@ -9,6 +9,8 @@ import { DeleteSubjectDto } from './dto/delete-subject.dto';
 import { UpdateSubjectDto } from './dto/update-subject.dto';
 import { SubjectService } from './subject.service';
 import { DeleteUserSubjectDto } from './dto/delete-user-subject.dto';
+import { GetUserId } from 'src/_utils/decorators/get-user-id.decorator';
+import { DeleteSubjectUserRegisterDto } from './dto/delete-subject-user-register.dto';
 
 @Controller('subject')
 @UseGuards(AuthGuard)
@@ -65,7 +67,6 @@ export class SubjectController {
   }
 
   @Get(':id/user-in')
-  @Roles(UserRole.ADMIN)
   async findAllUserInSubject(@Param('id') id: string, @Res() res: any) {
     const data = await this.subjectService.findAllUserInSubject(+id);
     return res.status(HttpStatus.OK).send(new BaseResponse({ data }));
@@ -75,6 +76,20 @@ export class SubjectController {
   @Roles(UserRole.ADMIN)
   async findAllUserNotInSubject(@Param('id') id: string, @Res() res: any) {
     const data = await this.subjectService.findAllUserNotInSubject(+id);
+    return res.status(HttpStatus.OK).send(new BaseResponse({ data }));
+  }
+
+  @Get('user-register')
+  @Roles(UserRole.USER)
+  async findAllSubjectUserRegister(@GetUserId() user_id: number, @Res() res: any) {
+    const data = await this.subjectService.findAllSubjectUserRegister(+user_id);
+    return res.status(HttpStatus.OK).send(new BaseResponse({ data }));
+  }
+
+  @Post('user-register/delete')
+  @Roles(UserRole.USER)
+  async deleteSubjectUserRegister(@GetUserId() user_id: number, @Body() body: DeleteSubjectUserRegisterDto, @Res() res: any) {
+    const data = await this.subjectService.deleteSubjectUserRegister(+user_id, body.subject_id);
     return res.status(HttpStatus.OK).send(new BaseResponse({ data }));
   }
 }

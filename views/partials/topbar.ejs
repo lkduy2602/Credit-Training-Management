@@ -108,5 +108,18 @@
         avatarTopbar.src = avatar;
         nameTopbar.innerText = first_name + ' ' + last_name;
         roleTopbar.innerText = role;
+
+        const roleAdmin = document.getElementsByClassName('role-admin');
+        const roleUser = document.getElementsByClassName('role-user');
+        if (role == 'user') {
+          for (const item of roleAdmin) {
+            item.style.display = 'none';
+          }
+        }
+        if (role == 'admin') {
+          for (const item of roleUser) {
+            item.style.display = 'none';
+          }
+        }
       });
     </script>

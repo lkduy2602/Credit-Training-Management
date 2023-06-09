@@ -30,6 +30,7 @@ export class SubjectService {
 
   async createSubject(body: CreateSubjectDto) {
     const { name, no_of_credit } = body;
+
     const isExistSubject = await this.subjectRepository.findOneBy({
       full_text_search: removeVietnameseTones(name),
       status: SubjectStatus.ACTIVE,
@@ -254,5 +255,51 @@ export class SubjectService {
     const userListNotInSubject = await queryBuilder.orderBy(`(substring_index(last_name, ' ', -1))`).getMany();
 
     return LitUserResponse.mapToList(userListNotInSubject);
+  }
+
+  async findAllSubjectUserRegister(user_id: number) {
+    const subject_user_register = await this.subjectRepository.find({
+      where: {
+        score: {
+          user: {
+            user_id,
+          },
+        },
+        status: SubjectStatus.ACTIVE,
+      },
+      order: {
+        subject_id: 'DESC',
+      },
+    });
+
+    return subject_user_register;
+  }
+
+  async deleteSubjectUserRegister(user_id: number, subject_id: number) {
+    const user = await this.userRepository.findOneBy({
+      user_id: user_id,
+      status: UserStatus.ACTIVE,
+      role: UserRole.USER,
+    });
+    if (!user) return;
+
+    const isExistUserInSubject = await this.scoreRepository.findOneBy({
+      user: {
+        user_id: user_id,
+      },
+      subject: {
+        subject_id,
+      },
+    });
+    if (!isExistUserInSubject) return;
+
+    await this.scoreRepository.delete({
+      user: {
+        user_id: user_id,
+      },
+      subject: {
+        subject_id,
+      },
+    });
   }
 }
