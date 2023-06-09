@@ -8,7 +8,7 @@
   </div>
 
   <!-- Content Row -->
-  <div class="row justify-content-around">
+  <div class="row justify-content-around role-admin">
     <!-- Earnings (Monthly) Card Example -->
     <div class="col-xl-3 col-md-6 mb-4">
       <div class="card border-left-primary shadow h-100 py-2">
@@ -63,7 +63,7 @@
 
   <!-- Content Row -->
 
-  <div class="row">
+  <div class="row role-admin">
     <!-- Area Chart -->
     <div class="col-xl-8 col-lg-7">
       <div class="card shadow mb-4">
@@ -96,6 +96,59 @@
       </div>
     </div>
   </div>
+
+  <div class="row justify-content-around role-user">
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Điểm trung bình hệ 10</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800" id="avg-score"></div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-solid fa-user-graduate fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-success shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Điểm trung bình GPA</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800" id="avg-score-gpa"></div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-solid fa-book fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pending Requests Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-warning shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Số tín chỉ đạt</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800" id="no_of_credit_pass"></div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-solid fa-university fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <!-- /.container-fluid -->
 
@@ -103,6 +156,10 @@
   const noOfStudentElement = document.getElementById('no_of_student_dashboard');
   const noOfSubjectElement = document.getElementById('no_of_subject_dashboard');
   const noOfClassElement = document.getElementById('no_of_class_dashboard');
+
+  const avgScoreElement = document.getElementById('avg-score');
+  const avgScoreGpaElement = document.getElementById('avg-score-gpa');
+  const noOfCreditPassElement = document.getElementById('no_of_credit_pass');
 
   window.addEventListener('load', async () => {
     const responseNoOfAll = await fetch(`${URL}/report/no-of-all`);
@@ -115,18 +172,17 @@
     const responseNoOfStudentSubject = await fetch(`${URL}/report/no-of-student-subject`);
     const resultNoOfStudentSubject = (await responseNoOfStudentSubject.json()).data;
 
-    const responseNoOfStudentDepartment= await fetch(`${URL}/report/no-of-student-department`);
+    const responseNoOfStudentDepartment = await fetch(`${URL}/report/no-of-student-department`);
     const resultNoOfStudentDepartment = (await responseNoOfStudentDepartment.json()).data;
-
 
     new Chart(document.getElementById('noOfStudentDepartmentChart'), {
       type: 'doughnut',
       data: {
-        labels: resultNoOfStudentDepartment.map(item=> item.name),
+        labels: resultNoOfStudentDepartment.map((item) => item.name),
         datasets: [
           {
             label: 'My First Dataset',
-            data: resultNoOfStudentDepartment.map(item=> item.no_of_student),
+            data: resultNoOfStudentDepartment.map((item) => item.no_of_student),
             hoverOffset: 4,
           },
         ],
@@ -154,6 +210,17 @@
         },
       },
     });
+  });
+
+  window.addEventListener('load', async () => {
+    const responseTotalScoreUser = await fetch(`${URL}/score/total-score-user`);
+    const resultTotalScoreUser = await responseTotalScoreUser.json();
+
+    avgScoreElement.innerHTML = resultTotalScoreUser.data.total_score;
+    avgScoreGpaElement.innerHTML = resultTotalScoreUser.data.total_score_gpa;
+    noOfCreditPassElement.innerHTML = resultTotalScoreUser.data.no_of_credit_pass;
+
+
   });
 </script>
 

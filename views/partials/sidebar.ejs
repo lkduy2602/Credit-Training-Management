@@ -107,27 +107,12 @@
           </a>
         </li>
 
-        <!-- Divider -->
-        <!-- <hr class="sidebar-divider" />
-
-        <li class="nav-item">
-          <a
-            class="nav-link collapsed"
-            href="#"
-            data-toggle="collapse"
-            data-target="#collapsePages"
-            aria-expanded="false"
-            aria-controls="collapsePages"
-          >
-            <i class="fas fa-fw fa-chart-area"></i>
-            <span>Báo cáo</span>
+        <li class="nav-item role-user" id="sidebar-score-list-user">
+          <a class="nav-link" href="/score/list/user">
+            <i class="fas fa-solid fa-star"></i>
+            <span>Điểm các môn</span>
           </a>
-          <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar" style="">
-            <div class="bg-white py-2 collapse-inner rounded">
-              <a class="collapse-item" href="login.html">Môn học</a>
-            </div>
-          </div>
-        </li> -->
+        </li>
 
         <!-- Divider -->
         <hr class="sidebar-divider" />
@@ -155,7 +140,9 @@
             break;
           case 'score':
             const sidebarScoreList = document.getElementById('sidebar-score-list');
+            const sidebarScoreListUser = document.getElementById('sidebar-score-list-user');
             sidebarScoreList.classList.add('active');
+            sidebarScoreListUser.classList.add('active');
             break;
           case 'class':
             const sidebarClassList = document.getElementById('sidebar-class-list');

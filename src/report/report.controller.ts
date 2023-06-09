@@ -14,7 +14,6 @@ export class ReportController {
   constructor(private readonly reportService: ReportService) {}
 
   @Get('no-of-all')
-  @Roles(UserRole.ADMIN)
   async getNoOfAll(@Res() res: any) {
     const data = await this.reportService.getNoOfAll();
     return res.status(HttpStatus.OK).send(new BaseResponse({ data }));

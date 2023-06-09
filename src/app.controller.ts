@@ -94,4 +94,10 @@ export class AppController {
   @Roles(UserRole.USER)
   @Render('subject/list-subject-user.ejs')
   listSubjectUserView() {}
+
+  @Get('score/list/user')
+  @UseGuards(AuthGuard)
+  @Roles(UserRole.USER)
+  @Render('score/list-score-user.ejs')
+  listScoreUserView() {}
 }

@@ -1,0 +1,114 @@
+<%- include('../partials/sidebar.ejs') %> <%- include('../partials/topbar.ejs') %>
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+  <!-- Page Heading -->
+  <!-- <h1 class="h3 mb-2 text-gray-800">Danh sách sinh viên</h1> -->
+
+  <!-- DataTales Example -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3 d-sm-flex align-items-center justify-content-between">
+      <h6 class="m-0 font-weight-bold text-primary">Điểm thành phần tất cả các môn</h6>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table id="example" class="table table-bordered" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th>Tên môn học</th>
+              <th>Số tín chỉ</th>
+              <th>Điểm chuyên cần (10%)</th>
+              <th>Điểm giữa kỳ (30%)</th>
+              <th>Điểm cuối kỳ (60%)</th>
+              <th>Điểm hệ số 10</th>
+              <th>GPA</th>
+              <th>Điểm chữ</th>
+              <th>Kết quả</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /.container-fluid -->
+
+<!-- Core plugin JavaScript-->
+<!-- <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script> -->
+<script>
+  window.addEventListener('load', async () => {
+    const body = document.getElementById('table-body');
+
+    const response = await fetch(`${URL}/score/user-score`);
+    const result = await response.json();
+
+    const columns = [
+      {
+        data: 'subject.name',
+      },
+      {
+        data: 'subject.no_of_credit',
+      },
+      {
+        data: 'attendance_score',
+      },
+      {
+        data: 'midterm_score',
+      },
+      {
+        data: 'final_score',
+      },
+      {
+        data: 'total_score',
+      },
+      {
+        data: 'gpa_score',
+      },
+      {
+        data: null,
+        render: function (data, type, row) {
+          if (row.gpa_score || row.gpa_score == 0) {
+            return convertToLetterGrade(row.gpa_score);
+          }
+          return '';
+        },
+      },
+      {
+        data: null,
+        render: function (data, type, row) {
+          if (row.gpa_score || row.gpa_score == 0) {
+            if (convertToLetterGrade(row.gpa_score) == 'F') {
+              return 'X';
+            } else {
+              return 'Đạt';
+            }
+          }
+          return '';
+        },
+      },
+    ];
+
+    paginationDataTable(result.data, columns);
+
+    function convertToLetterGrade(gpa) {
+    if (gpa >= 3.7) {
+      return 'A';
+    } else if (gpa >= 3.5) {
+      return 'A-';
+    } else if (gpa >= 3.0) {
+      return 'B+';
+    } else if (gpa >= 2.7) {
+      return 'B';
+    } else if (gpa >= 2.3) {
+      return 'C+';
+    } else if (gpa >= 2.0) {
+      return 'C';
+    } else if (gpa >= 1.5) {
+      return 'D+';
+    } else {
+      return 'F';
+    }
+  }
+  });
+</script>
+<%- include('../partials/footer.ejs') %>

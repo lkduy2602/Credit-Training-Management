@@ -97,6 +97,51 @@ export class ScoreService {
     );
   }
 
+  async findAllScoreInUser(user_id: number) {
+    const user_score = await this.scoreRepository.find({
+      where: {
+        user: {
+          user_id: user_id,
+        },
+      },
+      relations: {
+        subject: true,
+      },
+    });
+
+    return user_score;
+  }
+
+  async totalScoreInUser(user_id: number) {
+    const user_score = await this.scoreRepository.find({
+      where: {
+        user: {
+          user_id: user_id,
+        },
+      },
+      relations: {
+        subject: true,
+      },
+    });
+
+    let total_score = 0;
+    let total_score_gpa = 0;
+    let total_credit = 0;
+    let no_of_credit_pass = 0;
+    user_score.forEach((score) => {
+      total_score += score.total_score;
+      total_score_gpa += score.gpa_score * score.subject.no_of_credit;
+      total_credit += score.subject.no_of_credit;
+      if (score.gpa_score >= 2) no_of_credit_pass += score.subject.no_of_credit;
+    });
+
+    return {
+      total_score: Number((total_score / user_score.length).toFixed(1)),
+      total_score_gpa: Number((total_score_gpa / total_credit).toFixed(1)),
+      no_of_credit_pass,
+    };
+  }
+
   //====================================Support Function====================================
 
   convertToGPA(score: number) {
